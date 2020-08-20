@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.RatingActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/black"
+            android:layout_marginLeft="-15dp"
+            >
+            <ImageView
+                android:id="@+id/ivBackArrowimg"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:padding="5dp"
+                android:src="@drawable/ic_arrow_back_white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Your Point Balance"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightGray"
+    android:layout_marginTop="?actionBarSize">
+
+
+    <LinearLayout
+        android:id="@+id/LL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@color/white"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="5dp">
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Your balance"
+                android:imeOptions="actionNext"
+                android:padding="10dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/darker_gray"
+                android:textSize="18dp"
+               android:textStyle="bold"/>
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvBalance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="XXX Points"
+                android:imeOptions="actionNext"
+                android:padding="10dp"
+                android:layout_marginBottom="-5dp"
+                android:layout_marginTop="-10dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/skyBlueDark"
+                android:textStyle="bold"
+                android:textSize="24dp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/inputSec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:padding="10dp"
+            >
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Redeem your points for great discounts"
+                android:imeOptions="actionNext"
+                android:textColor="@android:color/black"
+                android:textSize="16dp"
+                android:paddingStart="10dp"/>
+
+
+        </LinearLayout>
+ <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/AppointmentsBgGrey"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:padding="10dp"
+            >
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="Points"
+                android:imeOptions="actionNext"
+                android:layout_weight="1"
+                android:textColor="@android:color/black"
+                android:textSize="16dp"
+                android:paddingStart="10dp"/>
+  <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="State"
+                android:imeOptions="actionNext"
+                android:layout_weight="1"
+      android:layout_marginLeft="-20dp"
+                android:textColor="@android:color/black"
+                android:textSize="16dp"
+      android:paddingStart="30dp"/>
+  <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="Date"
+                android:imeOptions="actionNext"
+                android:layout_weight="1"
+      android:layout_marginLeft="-20dp"
+                android:textColor="@android:color/black"
+                android:textSize="16dp"
+      android:paddingStart="30dp"/>
+
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPointBalance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"/>
+        <include layout="@layout/activity_no_data"
+            android:id="@+id/layNoData"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"       />
+    </LinearLayout>
+</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

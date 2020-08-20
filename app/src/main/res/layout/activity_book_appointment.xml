@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_white_curved_top"
+    tools:context=".Activities.ActivityBookAppointment"
+    android:paddingBottom="20dp"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+    <ImageView
+        android:id="@+id/ivCloseCrossimg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:padding="@dimen/_7sdp"
+        android:src="@drawable/ic_cross_grey"
+        app:layout_constraintBottom_toBottomOf="@id/tvOperatortitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvOperatortitle"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tviewbg1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvOperatortitle" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tviewbg1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvSelectDateTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:drawableLeft="@drawable/ic_date"
+                android:drawablePadding="@dimen/_5sdp"
+                android:drawableTint="@color/skyBlueLight"
+                android:text="Select Date"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+               />
+
+            <CalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:dateTextAppearance="@style/CalenderViewDateCustomText"
+                android:theme="@style/CalenderViewCustom"
+                android:weekDayTextAppearance="@style/CalenderViewWeekCustomText"
+                app:layout_constraintEnd_toEndOf="@id/tvSelectDateTitle"
+                app:layout_constraintStart_toStartOf="@+id/tvSelectDateTitle"
+                app:layout_constraintTop_toBottomOf="@id/tvSelectDateTitle"
+                />
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvSelectTimeSlotTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_clock_blue"
+                android:drawablePadding="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:drawableTint="@color/skyBlueLight"
+                android:gravity="center_vertical"
+                android:text="@string/select_time_slot"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:layout_marginStart="@dimen/_12sdp"
+                app:layout_constraintEnd_toEndOf="@id/tvSelectDateTitle"
+                app:layout_constraintStart_toStartOf="@+id/tvSelectDateTitle"
+                app:layout_constraintTop_toBottomOf="@id/calendarView"
+                android:visibility="gone"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycleTimeSlot"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:background="@color/white"
+                android:clipToPadding="false"
+                android:paddingBottom="@dimen/_5sdp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintEnd_toEndOf="@id/tvSelectDateTitle"
+                app:layout_constraintStart_toStartOf="@+id/tvSelectDateTitle"
+                app:layout_constraintTop_toBottomOf="@id/tvSelectTimeSlotTitle"
+                tools:listitem="@layout/recycle_time_slot_row"
+                android:visibility="gone"/>
+
+
+
+
+
+
+            <com.prometteur.saloonuser.Utils.ButtonCustomFont
+                android:id="@+id/btnBookNow"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/btn_bg"
+                android:text="Proceed"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                app:layout_constraintTop_toBottomOf="@+id/recycleTimeSlot"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvOperatortitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_50sdp"
+        android:gravity="center_vertical"
+        android:padding="@dimen/_10sdp"
+        android:text="Appointment Date &amp; Time"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

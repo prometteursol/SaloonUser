@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        > <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="0.55">
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvSrNo"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:padding="@dimen/_5sdp"
+        android:text="@string/sr_no"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvSerialNo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/_5sdp"
+        android:paddingRight="@dimen/_5sdp"
+        android:paddingBottom="@dimen/_5sdp"
+        android:text=""
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvSrNo"
+        app:layout_constraintStart_toStartOf="@+id/tvSrNo"
+        app:layout_constraintTop_toBottomOf="@+id/tvSrNo" />
+    </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_weight="0.25">
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvServiceName"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/_3sdp"
+        android:layout_marginEnd="@dimen/_3sdp"
+        android:background="@color/grey"
+        android:padding="@dimen/_5sdp"
+        android:text="@string/service_name"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/tvSrNo"
+        app:layout_constraintEnd_toStartOf="@+id/tvServicePrice"
+        app:layout_constraintStart_toEndOf="@+id/tvSrNo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvServicePrice"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:padding="@dimen/_5sdp"
+        android:text="@string/price"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/tvServiceName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/tvSrNo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvService"
+        android:layout_width="match_parent"
+        android:layout_height="21dp"
+        android:paddingLeft="@dimen/_5sdp"
+        android:paddingRight="@dimen/_5sdp"
+        android:text=""
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvServiceName"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvServiceName"
+        app:layout_constraintTop_toBottomOf="@+id/tvSrNo" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvServiceBrandtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_5sdp"
+        android:text="Brands:"
+        android:textColor="@color/darkGray"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/tvService"
+        app:layout_constraintTop_toBottomOf="@+id/tvService" />
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvServiceBrand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_5sdp"
+        android:text=""
+        android:textColor="@color/grey"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvService"
+        app:layout_constraintStart_toEndOf="@+id/tvServiceBrandtitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvService" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvServiceOperatorTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_5sdp"
+        android:text="Operator:"
+        android:textColor="@color/skyBlueDark"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="@+id/tvServiceBrandtitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvServiceBrand" />
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvServiceOperator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_5sdp"
+        android:text=""
+        android:textColor="@color/skyBlueDark"
+        android:textSize="13sp"
+
+        android:singleLine="true"
+        android:ellipsize="end"
+        app:layout_constraintEnd_toEndOf="@+id/tvServiceBrand"
+        app:layout_constraintStart_toEndOf="@+id/tvServiceOperatorTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvServiceBrand" />
+    </LinearLayout>
+
+</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="0.45">
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvServiceCost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:padding="5dp"
+        android:text=""
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvService"
+        app:layout_constraintEnd_toEndOf="@+id/tvServicePrice"
+        app:layout_constraintStart_toEndOf="@+id/tvService"
+        app:layout_constraintTop_toBottomOf="@+id/tvServiceName" />
+
+    </LinearLayout>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvServiceOperatorTitle" />
+</LinearLayout>

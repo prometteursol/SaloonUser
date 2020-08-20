@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.prometteur.saloonuser">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:hardwareAccelerated="false"
+        android:usesCleartextTraffic="true"
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true">
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivityBookAppointment"></activity>
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivityNotifications" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivityComboAndOffers" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivitySalonServices" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivitySalonProfile" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivityCustomerSupport" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivityAccountsSettings" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivityAppointmentDetails" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivitySearchSalons" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivitySearchLocation" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivityHomepage">
+
+        </activity>
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivityUpdateProfile" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivityOtpVerification" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivitySignUp" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivityLogin" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Activities.ForgotPasswordActivity" />
+        <activity android:name=".Activities.ChangePasswordActivity" />
+        <activity android:name=".Activities.RatingActivity" />
+        <activity android:name=".Activities.RejectionActivity" />
+        <activity android:name=".Activities.PromoOfferListDialogActivity"
+            android:theme="@style/Theme.AppCompat.Dialog"/>
+        <activity android:name=".Activities.ComboListDialogActivity"
+            android:theme="@style/Theme.AppCompat.Dialog"/>
+        <activity android:name=".Activities.CouponCodeListActivity" />
+        <activity android:name=".Activities.CartActivity" />
+        <!-- Image Picker activity -->
+        <activity android:name=".Utils.ImagePickerActivity" />
+
+        <!-- uCrop cropping activity -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Activities.SuccessDialogActivity"
+            android:theme="@style/Theme.AppCompat.Dialog"/>
+        <activity android:name=".Activities.AppointmentHistoryActivity" />
+        <activity android:name=".Activities.ConfirmDialogActivity"
+            android:theme="@style/Theme.AppCompat.Dialog"/>
+        <activity android:name=".Activities.RefferAndEarnActivity" />
+        <activity android:name=".Activities.PointBalanceActivity" />
+        <activity android:name=".Activities.ImageEnlargeActivity"
+            android:launchMode="singleTask"/>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/Maps_api_key" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <service android:name="com.prometteur.saloonuser.firebase.MyFirebaseMessagingService"
+            android:permission="com.google.android.c2dm.permission.RECEIVE"
+            android:exported="false"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".firebase.MyFirebaseInstanceIDService"
+            >
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider" />
+        </provider>
+
+        <meta-data
+            android:name="com.razorpay.ApiKey"
+            android:value="rzp_test_jE0LetyHqXOb4U"
+            />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/salon_logo_tr" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/skyBlueDark" />
+
+        <meta-data
+            android:name="com.google.firebandroid.permission.SYSTEM_ALERT_WINDOWase.messaging.default_notification_channel_id"
+            android:value="fetchh-channel"/>
+        <receiver
+            android:name=".Activities.ActivityHomepage$LocationProviderChangedReceiver"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".Utils.NetworkChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+    <supports-screens android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:xlargeScreens="true"
+        android:anyDensity="true" />
+</manifest>

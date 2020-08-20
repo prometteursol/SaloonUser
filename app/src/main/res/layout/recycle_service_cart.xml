@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginBottom="5dp"
+    >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:background="@drawable/row_rounded_background_white"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/linStartView"
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/row_side_rounded_background_blue"
+            android:orientation="vertical"
+            android:padding="5dp"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/linStartView"
+            android:layout_weight="0.22"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvServiceName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="-1"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="Brand :"
+                android:textColor="@color/grey"
+                android:textSize="12sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/_5sdp"
+                >
+
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                    android:id="@+id/tvAddRemoveOperator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_select_operator"
+                    android:textColor="@color/skyBlueLight"
+                    android:textSize="13sp"
+                    android:layout_weight="1"
+                    />
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                    android:id="@+id/tvAddedOperatorName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="+ Add to Cart"
+                    android:textColor="@color/skyBlueLight"
+                    android:textSize="13sp"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    />
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <com.prometteur.saloonuser.Utils.TextViewCustomFont
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            android:background="@color/grey"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.64"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/row_rounded_background_bluish"
+                android:layout_margin="@dimen/_5sdp"
+                android:padding="2dp"
+                >
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                    android:id="@+id/tvOfferPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    />
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                    android:id="@+id/tvMainPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/grey"
+                    android:textSize="12sp" />
+            </LinearLayout>
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="center"
+                android:text="% 0 OFF"
+                android:textColor="@color/darkGray"
+                android:textSize="12sp"
+
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                />
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/ivRemoveCombo"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="3dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="-5dp"
+        android:src="@drawable/ic_remove_circle_red"
+        android:layout_alignParentEnd="true"
+        android:elevation="5dp"
+        />
+</RelativeLayout>

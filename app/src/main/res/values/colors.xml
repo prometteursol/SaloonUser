@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="yellow">#FFC800</color>
+    <!--<color name="yellow">#FFBF00</color>-->
+    <color name="black">#1c1b17</color>
+    <color name="purple">#3930d8</color>
+    <color name="green">#11b719</color>
+    <color name="greenlilDark">#00783f</color>
+    <color name="darkGray">#626161</color>
+
+    <color name="lightGray">#f6f6f6</color>
+    <color name="AppointmentsBgGrey">#f0f0f0</color><!--#F0F0F0-->
+    <!--<color name="lightGray">#F1EFEF</color>-->
+    <color name="orange">#ff9800</color>
+    <color name="red">#f44336</color>
+
+    <color name="blackTransparent">#75000000</color>
+    <color name="whiteTransparent">#F0F0F0</color>
+
+    <!--new color code to update design-->
+    <color name="skyBlueDark">#088383</color>
+    <color name="skyBluelilDark">#00afaf</color>
+    <color name="skyBlueLight">#64E1E1</color>
+    <color name="greenDark">#138D56</color>
+    <color name="greenLight">#77D3A7</color>
+    <color name="grey">#a9a9a9</color>
+    <color name="grayNoti">#DDD7D7</color>
+    <color name="Rating_star_color">#FFC107</color>
+
+//button colors in recycler view
+    <color name="skyBlue1"> #64E1E1</color>
+    <color name="skyBlue2">#4DADAD</color>
+    <color name="skyBlue3">#429494</color>
+    <color name="skyBlue4">#337575</color>
+    <color name="skyBlue5">#2E6B6B</color>
+    <color name="skyBlue6">#386969</color>
+    <color name="skyBlue7">#224949</color>
+
+    //rate card price bg
+    <color name="yellowTransparent">#7AFFC800</color>
+
+
+    //button colors background
+    <color name="Blue1">#20bec7</color>
+    <color name="Blue2">#1ca9b0</color>
+    <color name="Blue3">#1e99a0</color>
+    <color name="Blue4">#0f8086</color>
+    <color name="Blue5">#04656b</color>
+    <color name="Blue6">#025055</color>
+
+</resources>

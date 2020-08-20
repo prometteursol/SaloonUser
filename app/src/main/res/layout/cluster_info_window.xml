@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:padding="5dp">
+
+
+    <ImageView
+        android:id="@+id/IV_hotel_photo"
+        android:layout_width="60dp"
+        android:scaleType="fitXY"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/img_login"
+        android:layout_height="60dp" />
+
+
+    <ImageView
+        android:id="@+id/IV_pin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvSalonName"
+        android:layout_toEndOf="@+id/IV_hotel_photo"
+        android:src="@drawable/ic_salon_location_pin_icon"
+        android:visibility="gone" />
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvSalonName"
+        android:progressTint="@color/Rating_star_color"
+        android:layout_marginStart="3dp"
+        android:layout_toEndOf="@+id/IV_pin"
+        android:ellipsize="end"
+        android:maxLength="25"
+        android:textColor="@color/black"
+        style="?android:attr/ratingBarStyleSmall"/>
+    <TextView
+        android:id="@+id/tvDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ratingBar"
+        android:layout_marginStart="3dp"
+        android:layout_toEndOf="@+id/IV_pin"
+        android:ellipsize="end"
+        android:maxLength="25"
+        android:drawablePadding="5dp"
+        android:text="@string/loading"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/tvSalonName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_toEndOf="@+id/IV_pin"
+        android:ellipsize="end"
+        android:maxLength="25"
+        android:paddingEnd="2dp"
+        android:text="@string/loading"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+</RelativeLayout>

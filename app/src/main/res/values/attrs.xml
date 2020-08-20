@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CustomeFont">
+
+        <attr name="textFont" format="enum">
+            <enum name="poppins_medium" value="0"/>
+            <enum name="poppins_light" value="1"/>
+            <enum name="poppins_semibold" value="2"/>
+        </attr>
+    </declare-styleable>
+</resources>

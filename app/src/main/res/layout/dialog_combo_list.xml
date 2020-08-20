@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/layout_rounded_white_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+
+
+        <com.prometteur.saloonuser.Utils.TextViewCustomFont
+            android:id="@+id/tvComboName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Combo Name"
+            android:textColor="@color/black"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            >
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@color/white"
+                android:clipToPadding="false"
+                android:paddingBottom="@dimen/_5sdp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:listitem="@layout/service_rate_card_row" />
+<!--<include layout="@layout/activity_no_data"/>-->
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_rounded_collect_cash_background_white"
+            android:padding="@dimen/_5sdp"
+            >
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Combo Price"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:layout_gravity="center"
+
+                />
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:gravity="center"
+                android:background="@color/lightGray"
+                android:textSize="16dp"
+                android:layout_gravity="center"
+
+                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/_5sdp"
+                >
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvDiscountAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=""
+                android:layout_marginLeft="@dimen/_5sdp"
+                app:textFont="poppins_semibold"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_20sdp" />
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=""
+                android:layout_marginLeft="@dimen/_5sdp"
+                app:textFont="poppins_semibold"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/_14sdp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.prometteur.saloonuser.Utils.ButtonCustomFont
+            android:id="@+id/btn_Done"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/btn_bg_blue_small"
+            android:onClick="closeDialog"
+            android:layout_marginLeft="@dimen/_30sdp"
+            android:layout_marginRight="@dimen/_30sdp"
+            android:text="@string/ok"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

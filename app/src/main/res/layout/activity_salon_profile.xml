@@ -1,0 +1,323 @@
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/coLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.ActivitySalonProfile"
+    android:fitsSystemWindows="true"
+    >
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="256dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?colorPrimary"
+            app:expandedTitleMarginStart="12dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+            <ImageView
+                android:id="@+id/ivHeaderImg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_login"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.5"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                android:background="@color/blackTransparent"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.5"
+                />
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/header_view_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:background="@drawable/status_rounded_green_background"
+                android:textSize="12sp"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_2sdp"
+                android:paddingTop="@dimen/_2sdp"
+                android:text="OPEN"
+                android:layout_gravity="right"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                />
+            <!--  <View
+                  android:layout_width="match_parent"
+                  android:layout_height="80dp"
+                  android:layout_gravity="top"
+                  android:background="@drawable/text_date_full_rounded_gray_background"
+                  android:fitsSystemWindows="true" />-->
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:contentInsetStart="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStartWithNavigation="0dp">
+                <!-- <LinearLayout
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:orientation="horizontal"
+                     android:gravity="right">
+                 <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                     android:id="@+id/header_view_status"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:textColor="@android:color/white"
+                     android:background="@drawable/status_rounded_green_background"
+                     android:textSize="12sp"
+                     android:paddingLeft="@dimen/_5sdp"
+                     android:paddingRight="@dimen/_5sdp"
+                     android:paddingBottom="@dimen/_2sdp"
+                     android:paddingTop="@dimen/_2sdp"
+                     android:text="OPEN"
+                     />
+                 </LinearLayout>-->
+                <include
+                    android:id="@+id/toolbar_header_view"
+                    layout="@layout/header_view"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginRight="@dimen/_14sdp"
+                    android:visibility="gone"
+                    />
+            </androidx.appcompat.widget.Toolbar>
+
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        <!-- <androidx.appcompat.widget.Toolbar
+             android:id="@+id/toolbar"
+             android:layout_width="match_parent"
+             android:layout_height="?attr/actionBarSize"
+             android:background="@color/colorPrimary"
+             app:popupTheme="@style/AppTheme.PopupOverlay" />-->
+
+    </com.google.android.material.appbar.AppBarLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <com.prometteur.saloonuser.Utils.TextViewCustomFont
+            android:id="@+id/tvInfraDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Infra. Details"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:textSize="14dp"
+            />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvSalonOpenTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_alignParentRight="true"
+            app:cardCornerRadius="3dp">
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvSalonOpenTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_graylight_less_curved"
+                android:paddingTop="@dimen/_2sdp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:text="@string/loading"
+                android:textColor="@color/white"
+                android:textSize="12dp"
+
+                />
+        </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycleServices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="8dp"
+            android:clipToPadding="false"
+            tools:listitem="@layout/recycle_top_services_row"
+            android:visibility="gone"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_horizontal">
+    <ImageView
+        android:id="@+id/ivAC"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_inactive_ac"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"/>
+    <ImageView
+        android:id="@+id/ivWIFI"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ic_inactive_wifi"
+        android:layout_weight="1"/>
+    <ImageView
+        android:id="@+id/ivTV"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ic_inactive_tv"
+        android:layout_weight="1"/>
+    <ImageView
+        android:id="@+id/ivParking"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ic_inactive_park"
+        android:layout_weight="1"/>
+</LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/AppointmentsBgGrey"
+            android:layout_marginTop="@dimen/_2sdp"
+            />
+
+        <com.prometteur.saloonuser.Utils.TextViewCustomFont
+            android:id="@+id/tvComboOffers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/combo_amp_offers"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            android:drawableStart="@drawable/ic_sale_offers"
+            android:paddingTop="@dimen/_1sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:drawablePadding="@dimen/_5sdp"
+            android:drawableEnd="@drawable/ic_navigate_goright_blue"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="-10dp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:background="@color/lightGray"
+            android:descendantFocusability="blocksDescendants"
+            >
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabIndicatorColor="@color/skyBlueDark"
+                app:tabSelectedTextColor="@color/skyBlueDark"
+                android:background="@color/lightGray"
+                />
+            <com.prometteur.saloonuser.Utils.HeightWrappingViewPager
+                android:id="@+id/vpSalonInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+           <!-- <com.prometteur.saloonuser.Utils.ButtonCustomFont
+                android:id="@+id/btnBookNow"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:text="@string/book_now"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_bg"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_60sdp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                />-->
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/float_header_view"
+        layout="@layout/header_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior=".Utils.ViewBehavior"
+        />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <LinearLayout
+        android:id="@+id/linBtnSec"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@color/lightGray"
+        android:layout_alignParentBottom="true"
+        >
+
+
+        <com.prometteur.saloonuser.Utils.ButtonCustomFont
+            android:id="@+id/btnBookNow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:text="Menu"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_bg"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:textSize="16dp"
+            />
+    </LinearLayout>
+
+</RelativeLayout>
+

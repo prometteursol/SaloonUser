@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.ActivityAppointmentDetails">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tbAppointment"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginLeft="-15dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <ImageView
+                    android:id="@+id/ivBackArrowimg"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_arrow_back_white"
+                    />
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/appointment_details"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+
+
+        </androidx.appcompat.widget.Toolbar>
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/_1sdp"
+        android:layout_marginBottom="@dimen/_1sdp"
+        app:layout_constraintBottom_toTopOf="@id/conlaybottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/conMainLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"
+            >
+
+            <RatingBar
+                android:id="@+id/rbSalonRating"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:numStars="5"
+                android:progressTint="@color/Rating_star_color"
+                android:rating="0"
+                app:layout_constraintStart_toEndOf="@id/rivSaloonImage"
+                app:layout_constraintTop_toBottomOf="@id/tvSalonName" />
+
+            <View
+                android:id="@+id/view3"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:background="@color/AppointmentsBgGrey"
+                app:layout_constraintEnd_toEndOf="@+id/tvAppointmentStatus"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rivSaloonImage" />
+
+            <View
+                android:id="@+id/view5"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@color/AppointmentsBgGrey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvStartotp" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycle_ComboSelected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvSrNo"
+               />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycle_PromoOffSelected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycle_ComboSelected"
+                />
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvMoreService"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="More Services"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:paddingLeft="15dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textSize="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycle_PromoOffSelected"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycle_ServicesSelected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvMoreService" />
+
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvAppointmentDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/bg_bluelight_less_curved"
+                android:text="@string/loading"
+                android:textColor="@color/white"
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp"
+                android:paddingTop="2dp"
+                android:textSize="15dp"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvAppointmentTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:padding="@dimen/_2sdp"
+                android:text="@string/loading"
+                android:textColor="@color/skyBluelilDark"
+                android:textSize="15dp"
+                app:layout_constraintStart_toEndOf="@+id/tvAppointmentDate"
+                app:layout_constraintTop_toTopOf="@+id/tvAppointmentDate" />
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvAppointmentStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:padding="@dimen/_2sdp"
+                android:text=""
+                android:textColor="@color/greenlilDark"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/tvAppointmentTime"
+                app:layout_constraintTop_toTopOf="@+id/tvAppointmentTime" />
+
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvSalonName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:maxLines="1"
+                android:text="@string/loading"
+                android:textColor="@color/black"
+                android:textSize="15dp"
+                app:layout_constraintStart_toEndOf="@id/rivSaloonImage"
+                app:layout_constraintTop_toTopOf="@id/rivSaloonImage" />
+
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvSalonLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:drawableLeft="@drawable/ic_location_icon"
+                android:drawablePadding="@dimen/_8sdp"
+                android:maxLines="1"
+                android:text="@string/loading"
+                android:textColor="@color/darkGray"
+                android:textSize="12dp"
+                app:layout_constraintStart_toEndOf="@id/rivSaloonImage"
+                app:layout_constraintTop_toBottomOf="@id/rbSalonRating" />
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvSalonDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_location_distance_icon"
+                android:drawablePadding="@dimen/_8sdp"
+                android:text="@string/loading"
+                android:textColor="@color/darkGray"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:textSize="12dp"
+                android:gravity="center_vertical"
+                app:layout_constraintStart_toEndOf="@id/rivSaloonImage"
+                app:layout_constraintTop_toBottomOf="@id/tvSalonLocation"
+                />
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginStart="103dp"
+    android:layout_marginBottom="@dimen/_10sdp"
+    app:layout_constraintStart_toEndOf="@id/rivSaloonImage"
+    app:layout_constraintTop_toBottomOf="@id/tvSalonLocation">
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvAppoId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Appo ID : "
+                android:textColor="@color/skyBluelilDark"
+                android:textSize="12dp"
+                android:layout_gravity=""
+                android:gravity="center_vertical"
+                android:layout_marginEnd="14dp"
+                android:layout_alignParentRight="true"
+                />
+</RelativeLayout>
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvStartOtpCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:gravity="center"
+                android:padding="@dimen/_2sdp"
+                android:text="XXXX"
+                android:textColor="@color/skyBlueLight"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvStartotp"
+                app:layout_constraintStart_toEndOf="@+id/tvStartotp"
+                app:layout_constraintTop_toTopOf="@+id/tvStartotp" />
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvStartotp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:padding="@dimen/_2sdp"
+                android:text="@string/start_otp"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="@+id/rivSaloonImage"
+                app:layout_constraintTop_toBottomOf="@+id/view3" />
+
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvSrNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@color/AppointmentsBgGrey"
+                android:padding="@dimen/_5sdp"
+                android:text="@string/sr_no"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view5" />
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvServiceName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:layout_marginEnd="@dimen/_3sdp"
+                android:background="@color/AppointmentsBgGrey"
+                android:padding="@dimen/_5sdp"
+                android:text="@string/service_name"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvSrNo"
+                app:layout_constraintEnd_toStartOf="@+id/tvServicePrice"
+                app:layout_constraintStart_toEndOf="@+id/tvSrNo"
+                app:layout_constraintTop_toTopOf="@+id/tvSrNo" />
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvServicePrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:background="@color/AppointmentsBgGrey"
+                android:padding="@dimen/_5sdp"
+                android:text="@string/price"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvServiceName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/tvSrNo"
+                app:layout_constraintTop_toTopOf="@+id/tvServiceName" />
+<LinearLayout
+    android:id="@+id/linSubTotal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    app:layout_constraintEnd_toStartOf="parent"
+    app:layout_constraintStart_toStartOf="@+id/tvServiceName"
+    app:layout_constraintTop_toBottomOf="@+id/recycle_ServicesSelected">
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvSubTotal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:gravity="center_vertical"
+                android:text="@string/sub_total"
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                android:layout_weight="1"
+                 />
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvSubTotalPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end|center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                app:layout_constraintEnd_toEndOf="@+id/tvServicePrice"
+                app:layout_constraintStart_toEndOf="@+id/tvServiceName"
+                app:layout_constraintTop_toTopOf="@+id/tvSubTotal"
+                android:layout_weight="1"/>
+
+
+
+
+</LinearLayout>
+            <View
+                android:id="@+id/greyviewSalonDiscount"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:background="@color/grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linSubTotal" />
+            <LinearLayout
+                android:id="@+id/linSalonDiscount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="-10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/greyviewSalonDiscount">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_weight="0.3">
+                    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Salon Discount :"
+                        android:paddingLeft="@dimen/_5sdp"
+                        android:paddingRight="@dimen/_5sdp"
+                        android:textColor="@color/black"
+                        android:textSize="13dp"
+                        />
+                    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                        android:id="@+id/tvOfferApplied"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0 Offer Applied"
+                        android:textColor="@color/skyBluelilDark"
+                        android:textSize="11dp"
+                        android:layout_centerVertical="true"
+                        />
+                </LinearLayout>
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                    android:id="@+id/tvSavingAmt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="13dp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:textColor="@color/black"
+                    android:layout_weight="0.6"
+                    android:gravity="right"
+                    />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/greyviewDiscount"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:background="@color/grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linSalonDiscount" />
+            <LinearLayout
+                android:id="@+id/linDiscount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toStartOf="parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:layout_constraintStart_toStartOf="@+id/linSubTotal"
+                app:layout_constraintTop_toBottomOf="@+id/greyviewDiscount"
+                >
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:gravity="center_vertical"
+                android:text="Mooi Discount"
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                android:layout_weight="1"
+                 />
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvDiscountPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end|center_vertical"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                app:layout_constraintEnd_toEndOf="@+id/tvSubTotalPrice"
+                app:layout_constraintStart_toEndOf="@+id/tvServiceName"
+                app:layout_constraintStart_toStartOf="@+id/tvSubTotalPrice"
+                app:layout_constraintTop_toTopOf="@+id/tvGstAmmount"
+                android:layout_weight="1"/>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/greyview1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:background="@color/grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linDiscount" />
+            <LinearLayout
+                android:id="@+id/linGst"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toStartOf="parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:layout_constraintStart_toStartOf="@+id/linSubTotal"
+                app:layout_constraintTop_toBottomOf="@+id/greyview1">
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvGstAmmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:gravity="center_vertical"
+                android:text="Service Charges"
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                android:layout_weight="1"
+                 />
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvGstPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end|center_vertical"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                app:layout_constraintEnd_toEndOf="@+id/tvSubTotalPrice"
+                app:layout_constraintStart_toEndOf="@+id/tvServiceName"
+                app:layout_constraintStart_toStartOf="@+id/tvSubTotalPrice"
+                app:layout_constraintTop_toTopOf="@+id/tvGstAmmount"
+                android:layout_weight="1"/>
+
+            </LinearLayout>
+            <View
+                android:id="@+id/greyview11"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:background="@color/grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linGst" />
+            <LinearLayout
+                android:id="@+id/linPenalty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toStartOf="parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:layout_constraintStart_toStartOf="@+id/linSubTotal"
+                app:layout_constraintTop_toBottomOf="@+id/greyview11"
+                >
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                    android:id="@+id/tvPenaltyAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:gravity="center_vertical"
+                    android:text="Penalty Amount"
+                    android:textColor="@color/black"
+                    android:textSize="13dp"
+                    android:layout_weight="1"
+                    />
+
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                    android:id="@+id/tvPenaltyPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="13dp"
+                    app:layout_constraintEnd_toEndOf="@+id/tvSubTotalPrice"
+                    app:layout_constraintStart_toEndOf="@+id/tvServiceName"
+                    app:layout_constraintStart_toStartOf="@+id/tvSubTotalPrice"
+                    app:layout_constraintTop_toTopOf="@+id/tvGstAmmount"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+            <View
+                android:id="@+id/greyviewRedeemPoint"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:background="@color/grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linPenalty" />
+            <LinearLayout
+                android:id="@+id/linRedeemPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toStartOf="parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:layout_constraintStart_toStartOf="@+id/linSubTotal"
+                app:layout_constraintTop_toBottomOf="@+id/greyviewRedeemPoint"
+                >
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:gravity="center_vertical"
+                    android:text="Redeem Points"
+                    android:textColor="@color/black"
+                    android:textSize="13dp"
+                    android:layout_weight="1"
+                    />
+
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                    android:id="@+id/tvRedeemPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="13dp"
+                    app:layout_constraintEnd_toEndOf="@+id/tvSubTotalPrice"
+                    app:layout_constraintStart_toEndOf="@+id/tvServiceName"
+                    app:layout_constraintStart_toStartOf="@+id/tvSubTotalPrice"
+                    app:layout_constraintTop_toTopOf="@+id/tvGstAmmount"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+            <View
+                android:id="@+id/greyview2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:background="@color/grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linRedeemPoint" />
+            <LinearLayout
+                android:id="@+id/linTotal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:layout_constraintEnd_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/linGst"
+                app:layout_constraintTop_toBottomOf="@+id/greyview2"
+                >
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvTotal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:gravity="center_vertical"
+                android:text="@string/total"
+                app:textFont="poppins_semibold"
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                android:layout_weight="1"
+                 />
+
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvTotalPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end|center_vertical"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text=""
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                app:textFont="poppins_semibold"
+                app:layout_constraintEnd_toEndOf="@+id/tvSubTotalPrice"
+                app:layout_constraintStart_toEndOf="@+id/tvServiceName"
+                app:layout_constraintStart_toStartOf="@+id/tvSubTotalPrice"
+                app:layout_constraintTop_toTopOf="@+id/tvTotal"
+                android:layout_weight="1"/>
+            </LinearLayout>
+            <com.github.siyamed.shapeimageview.RoundedImageView
+                android:id="@+id/rivSaloonImage"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:src="@drawable/img_login"
+                app:layout_constraintStart_toStartOf="@+id/tvAppointmentDate"
+                app:layout_constraintTop_toBottomOf="@+id/tvAppointmentDate"
+                app:siBorderColor="@null"
+                app:siRadius="10dp" />
+
+            <View
+                android:id="@+id/viewbggrey"
+                android:background="@color/AppointmentsBgGrey"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                app:layout_constraintTop_toBottomOf="@+id/linTotal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:visibility="gone"
+/>
+            <RelativeLayout
+                android:id="@+id/relOfferApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:background="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/viewbggrey"
+                app:layout_constraintStart_toStartOf="@+id/viewbggrey"
+                android:padding="10dp">
+
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                    android:id="@+id/tvMsg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" Your Total Savings - "
+                    android:background="@color/white"
+                    android:textColor="@color/skyBluelilDark"
+                    android:textSize="12dp"
+                    android:layout_centerVertical="true"
+                    />
+                <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                    android:id="@+id/tvTotalSavings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:background="@color/white"
+                    android:textColor="@color/skyBluelilDark"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="5dp"
+
+                    />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/relPayStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:background="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/relOfferApp"
+                app:layout_constraintStart_toStartOf="@+id/relOfferApp"
+                android:padding="10dp"
+                android:visibility="gone">
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvPaymentStatusTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/payment_status"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:visibility="visible"
+                />
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvPaymentStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="Paid"
+                android:textColor="@color/greenlilDark"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_alignParentRight="true"
+                android:visibility="visible"
+                />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/relPayType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:background="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/relPayStatus"
+                app:layout_constraintStart_toStartOf="@+id/relPayStatus"
+                android:padding="10dp"
+                android:visibility="gone">
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvPaymentTypeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/payment_type"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:visibility="visible"
+                />
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvPaymentType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="Card"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:layout_alignParentRight="true"
+                android:visibility="visible"
+                />
+            </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/conlaybottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+        <com.prometteur.saloonuser.Utils.ButtonCustomFont
+            android:id="@+id/btnCall"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:background="@drawable/btn_bg_green"
+            android:text="@string/call"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnCancel"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+             />
+
+        <com.prometteur.saloonuser.Utils.ButtonCustomFont
+            android:id="@+id/btnPayNow"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:background="@drawable/btn_bg"
+            android:text="@string/pay_now"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:visibility="gone"
+            android:textAllCaps="false"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            />
+
+        <com.prometteur.saloonuser.Utils.ButtonCustomFont
+            android:id="@+id/btnCancel"
+            android:layout_width="@dimen/_140sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:background="@drawable/btn_bg_red"
+            android:text=" Cancel Appointment "
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnCall"
+            app:layout_constraintTop_toTopOf="parent"
+
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

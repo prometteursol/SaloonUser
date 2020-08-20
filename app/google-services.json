@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "826061620330",
+    "firebase_url": "https://mooi-36e76.firebaseio.com",
+    "project_id": "mooi-36e76",
+    "storage_bucket": "mooi-36e76.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:826061620330:android:f59de6edf05f05c990f613",
+        "android_client_info": {
+          "package_name": "com.prometteur.cpapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "826061620330-t6e913o467dlo6le0pk9g9cac8ob1lqo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.prometteur.cpapp",
+            "certificate_hash": "273a368e75b2329b098aa691c87e82b701ce03bb"
+          }
+        },
+        {
+          "client_id": "826061620330-d84ohot231iv3e78r1308gskgqc3kmmg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPy6Ntxt1tXA_Ab2VSlma_YMpKrzydBXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "826061620330-d84ohot231iv3e78r1308gskgqc3kmmg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "826061620330-l7p64c7rr045hppp30la52ncejojk1p0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.prometteur.Mooi"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:826061620330:android:79dc6f23f09729e690f613",
+        "android_client_info": {
+          "package_name": "com.prometteur.saloonuser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "826061620330-k01qbh6gcnocotqv5jeq9nvei9cruok6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.prometteur.saloonuser",
+            "certificate_hash": "273a368e75b2329b098aa691c87e82b701ce03bb"
+          }
+        },
+        {
+          "client_id": "826061620330-d84ohot231iv3e78r1308gskgqc3kmmg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPy6Ntxt1tXA_Ab2VSlma_YMpKrzydBXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "826061620330-d84ohot231iv3e78r1308gskgqc3kmmg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "826061620330-l7p64c7rr045hppp30la52ncejojk1p0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.prometteur.Mooi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
