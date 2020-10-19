@@ -27,7 +27,7 @@
                 android:id="@+id/profile_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/img_profile"
+                android:src="@drawable/placeholder_gray_circle"
                 android:layout_marginTop="@dimen/_5sdp"
                 />
             <LinearLayout

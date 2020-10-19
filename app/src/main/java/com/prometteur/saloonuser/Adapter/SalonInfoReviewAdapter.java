@@ -49,10 +49,10 @@ public class SalonInfoReviewAdapter extends RecyclerView.Adapter<SalonInfoReview
         holder.rbRatings.setRating(Float.parseFloat(mDataList.get(position).getRevRating()));
 
         if(mDataList.get(position).getUserImg()!=null && !mDataList.get(position).getUserImg().isEmpty()) {
-            Glide.with(nActivity).load(mDataList.get(position).getUserImg()).into(holder.profileImage);
+            Glide.with(nActivity).load(mDataList.get(position).getUserImg()).placeholder(R.drawable.placeholder_gray_circle).error(R.drawable.placeholder_gray_circle).into(holder.profileImage);
         }else
         {
-            Glide.with(nActivity).load(R.drawable.img_profile).into(holder.profileImage);
+            Glide.with(nActivity).load(R.drawable.placeholder_gray_circle).placeholder(R.drawable.placeholder_gray_circle).into(holder.profileImage);
         }
     }
 

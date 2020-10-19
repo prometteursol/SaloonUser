@@ -95,7 +95,7 @@ public class FragmentComboPage extends Fragment {
                }
                mLastClickTimeGoToCart = SystemClock.elapsedRealtime();
                startActivity(new Intent(nActivity, CartActivity.class).putExtra("branchId", branchId).putExtra("mainCat",mainCat));
-               nActivity.finish();
+              // nActivity.finish();
            }
        });
        /* mDataList=new ArrayList<>();
@@ -149,7 +149,7 @@ public class FragmentComboPage extends Fragment {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override

@@ -21,6 +21,8 @@ import com.smarteist.autoimageslider.SliderViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.prometteur.saloonuser.Utils.Utils.showFailToast;
+
 public class SliderAdapterExample extends
         SliderViewAdapter<SliderAdapterExample.SliderAdapterVH> {
 
@@ -62,6 +64,8 @@ public class SliderAdapterExample extends
         viewHolder.textViewDescription.setTextColor(Color.WHITE);
         Glide.with(viewHolder.itemView)
                 .load(sliderItem.getImageUrl())
+                .placeholder(R.drawable.img_salon_ads)
+                .error(R.drawable.img_salon_ads)
                 .fitCenter()
                 .into(viewHolder.imageViewBackground);
 
@@ -71,10 +75,7 @@ public class SliderAdapterExample extends
                 String url =sliderItem.getDescription();
                 try {
                     if(!url.isEmpty()) {
-                        Uri uri = Uri.parse("googlechrome://navigate?url=" + url);
-                        Intent i = new Intent(Intent.ACTION_VIEW, uri);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(i);
+                        openWebPage(url);
                     }
                 } catch (ActivityNotFoundException e) {
                     // Chrome is probably not installed
@@ -102,6 +103,17 @@ public class SliderAdapterExample extends
             imageGifContainer = itemView.findViewById(R.id.iv_gif_container);
             textViewDescription = itemView.findViewById(R.id.tv_auto_image_slider);
             this.itemView = itemView;
+        }
+    }
+
+    public void openWebPage(String url) {
+        try {
+            Uri webpage = Uri.parse(url);
+            Intent myIntent = new Intent(Intent.ACTION_VIEW, webpage);
+            context.startActivity(myIntent);
+        } catch (ActivityNotFoundException e) {
+            showFailToast(context, "No application can handle this request. Please install a web browser or check your URL.");
+            e.printStackTrace();
         }
     }
 

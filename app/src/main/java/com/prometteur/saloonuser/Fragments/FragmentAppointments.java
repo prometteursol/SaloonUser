@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import android.text.Html;
@@ -68,7 +69,6 @@ import static com.prometteur.saloonuser.Utils.Utils.showProgress;
 public class FragmentAppointments extends Fragment implements OnTabRemoveListener {
 
     FragmentAppointmentsBinding appointmentsBinding;
-    BottomSheetBehavior bottomBehaviour;
     Activity nActivity;
 
     public FragmentAppointments() {
@@ -93,6 +93,21 @@ public class FragmentAppointments extends Fragment implements OnTabRemoveListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        appointmentsBinding.pullToRefresh.setNestedScrollingEnabled(false);
+        appointmentsBinding.pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to make your refresh action
+                if (isNetworkAvailable(nActivity)) {
+                    getAppointments();
+                } else {
+                    showNoInternetDialog(nActivity);
+                }
+                if(appointmentsBinding.pullToRefresh.isRefreshing()) {
+                    appointmentsBinding.pullToRefresh.setRefreshing(false);
+                }
+            }
+        });
         if (isNetworkAvailable(nActivity)) {
             getAppointments();
         } else {
@@ -186,20 +201,26 @@ Context context;
 
                     @Override
                     public void onNext(AppointmentBean loginBeanObj) {
-                        progressDialog.dismiss();
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
                         appointmentBean = loginBeanObj;
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        progressDialog.dismiss();
-                        showFailToast(context, nActivity.getResources().getString(R.string.went_wrong));
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                       // showFailToast(context, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
                     public void onComplete() {
                         // Updates UI with data
-                        progressDialog.dismiss();
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
 
                         if (appointmentBean.getStatus() == 1) {
 
@@ -220,11 +241,13 @@ Context context;
                                 appointmentsBinding.vpAppointments.setAdapter(appointmentTabAdapter);
                                 addDot(0);
                                 appointmentsBinding.vpAppointments.setVisibility(View.VISIBLE);
+                                appointmentsBinding.pullToRefresh.setVisibility(View.VISIBLE);
                                 appointmentsBinding.layoutDot.setVisibility(View.VISIBLE);
                                 appointmentsBinding.linTab.setPadding(0,0,0,0);
                             }else
                             {
                                 appointmentsBinding.vpAppointments.setVisibility(View.GONE);
+                                appointmentsBinding.pullToRefresh.setVisibility(View.GONE);
                                 appointmentsBinding.layoutDot.setVisibility(View.GONE);
                                 appointmentsBinding.linTab.setPadding(0,20,0,0);
                             }

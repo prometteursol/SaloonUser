@@ -1,11 +1,22 @@
 package com.prometteur.saloonuser.Activities;
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
@@ -14,6 +25,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -66,6 +78,9 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
         SignupBinding.ivBackImg.setOnClickListener(this);
         SignupBinding.btnSignUp.setOnClickListener(this);
         SignupBinding.tvLogin.setOnClickListener(this);
+        SignupBinding.tvTermAndCondi.setMovementMethod(LinkMovementMethod.getInstance());
+        SignupBinding.tvTermAndCondi.setText(setSpanText(getString(R.string.terms_conditions)), TextView.BufferType.SPANNABLE);
+        //SignupBinding.tvTermAndCondi.setSelected(true);
 
 
 
@@ -130,8 +145,52 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
                 break;
         }
     }
+public SpannableString setSpanText(String text)
+{
+    SpannableString spannableString = new SpannableString(text);
+
+    // It is used to set foreground color.
+    ForegroundColorSpan blue = new ForegroundColorSpan(getResources().getColor(R.color.skyBlueLight));
+
+    ClickableSpan teremsAndCondition = new ClickableSpan() {
+        @Override
+        public void onClick(View textView) {
+
+openWebPage("https://mooi.app/our-policy/Mooi_User_Terms_of_Services.html");
+
+        }
+    };
 
 
+    // Character starting from 32 - 45 is Terms and condition.
+    // Character starting from 49 - 63 is privacy policy.
+
+    ClickableSpan privacy = new ClickableSpan() {
+        @Override
+        public void onClick(View textView) {
+
+            openWebPage("https://mooi.app/our-policy/Mooi_User_Privacy%20Policy.html");
+
+        }
+    };
+
+
+    spannableString.setSpan(privacy, 31, 45, 0);
+    spannableString.setSpan(teremsAndCondition, 50, 67, 0);
+    //spannableString.setSpan(blue, 31, 45, 0);
+    //spannableString.setSpan(blue, 50, 67, 0);
+    return spannableString;
+}
+    public void openWebPage(String url) {
+        try {
+            Uri webpage = Uri.parse(url);
+            Intent myIntent = new Intent(Intent.ACTION_VIEW, webpage);
+            startActivity(myIntent);
+        } catch (ActivityNotFoundException e) {
+            showFailToast(this, "No application can handle this request. Please install a web browser or check your URL.");
+            e.printStackTrace();
+        }
+    }
     RegBean loginBean;
     private String userFName;
     private String userLName;
@@ -264,7 +323,7 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ActivitySignUp.this, getResources().getString(R.string.went_wrong));
+                      //  showFailToast(ActivitySignUp.this, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -315,7 +374,7 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ActivitySignUp.this,  getResources().getString(R.string.went_wrong));
+                      //  showFailToast(ActivitySignUp.this,  getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -370,7 +429,7 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ActivitySignUp.this,  getResources().getString(R.string.went_wrong));
+                       // showFailToast(ActivitySignUp.this,  getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -417,7 +476,7 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ActivitySignUp.this,  getResources().getString(R.string.went_wrong));
+                        //showFailToast(ActivitySignUp.this,  getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -458,6 +517,7 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
     DialogAccountCreatedBinding dialogBinding;
     private void showCongratsDialog(final Context nContext) {
         accountCreated = new Dialog(nContext, R.style.CustomAlertDialog);
+        accountCreated.setCancelable(false);
         dialogBinding = DialogAccountCreatedBinding.inflate(LayoutInflater.from(nContext));
         accountCreated.setContentView(dialogBinding.getRoot());
         Window window = accountCreated.getWindow();

@@ -5,6 +5,7 @@ import com.prometteur.saloonuser.R;
 public class ConstantVariables {
 
    public static String BASE_URL="http://survey.sairoses.com/eu/index.php/api/";
+//   public static String BASE_URL="https://mooi.app/eu/index.php/api/";
 
    public static final String fromPayment="From Payment";
    public static final String fromAppointmentCompleted="AppointmentCompleted";

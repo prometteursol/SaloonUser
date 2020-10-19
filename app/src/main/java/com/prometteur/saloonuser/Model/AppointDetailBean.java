@@ -295,6 +295,12 @@ this.result = result;
         @SerializedName("apt_coupon_price")
         @Expose
         private String aptCouponPrice;
+        @SerializedName("apt_mooi_discount")
+        @Expose
+        private String aptMooiDiscount;
+        @SerializedName("apt_discount")
+        @Expose
+        private String aptDiscount;
         @SerializedName("apt_penality")
         @Expose
         private String aptPenality;
@@ -359,6 +365,22 @@ this.result = result;
 
         public void setAptPaymentStatus(String aptPaymentStatus) {
             this.aptPaymentStatus = aptPaymentStatus;
+        }
+
+        public String getAptMooiDiscount() {
+            return aptMooiDiscount;
+        }
+
+        public void setAptMooiDiscount(String aptMooiDiscount) {
+            this.aptMooiDiscount = aptMooiDiscount;
+        }
+
+        public String getAptDiscount() {
+            return aptDiscount;
+        }
+
+        public void setAptDiscount(String aptDiscount) {
+            this.aptDiscount = aptDiscount;
         }
 
         public String getAptAmount() {
@@ -589,6 +611,9 @@ this.result = result;
         @SerializedName("user_l_name")
         @Expose
         private String userLName;
+        @SerializedName("srvc_discount_price")
+        @Expose
+        private String srvcDiscountPrice;
         private final static long serialVersionUID = 7662479106818600039L;
 
         public String getSrvcName() {
@@ -629,6 +654,14 @@ this.result = result;
 
         public void setUserLName(String userLName) {
             this.userLName = userLName;
+        }
+
+        public String getSrvcDiscountPrice() {
+            return srvcDiscountPrice;
+        }
+
+        public void setSrvcDiscountPrice(String srvcDiscountPrice) {
+            this.srvcDiscountPrice = srvcDiscountPrice;
         }
 
     }

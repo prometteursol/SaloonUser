@@ -453,7 +453,7 @@ if(!operatorName.isEmpty()) {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -563,6 +563,20 @@ if(!operatorName.isEmpty()) {
                                 strTimeSlots[0]=Preferences.getPreferenceValue(nActivity, "workingHour");
                                 strTime="";
                                 if (!strTimeSlots[0].isEmpty()) {
+
+                                    //for today
+                                    final SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
+                                    final Date dateStartWithDate= new Date();
+                                    Date startTimeDate = null;
+                                    try {
+                                        startTimeDate = sdf1.parse(strTimeSlots[0].split("-")[0]);
+                                        dateStartWithDate.setHours(startTimeDate.getHours());
+                                        dateStartWithDate.setMinutes(startTimeDate.getMinutes());
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    //for today end
+
                                     Date curDate = new Date();
                                     Date nextDate = new Date();
                                     date1.setHours(0);//1591883765659 1591813800000
@@ -575,23 +589,35 @@ if(!operatorName.isEmpty()) {
                                     nextDate.setMinutes(0);
                                     nextDate.setSeconds(0);
 
-                                    SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
                                     String changeFTime;
                                     if (date1.getDate() == curDate.getDate() && date1.getMonth() == curDate.getMonth() && date1.getYear() == curDate.getYear()) {
 
-                                        if (new Date().getTime() > todayDateTimeEndTime) {
-                                            changeFTime = sdf1.format(new Date().getTime());
-                                        } else {
-                                            Date date2 = new Date();
+                                        final long currentDateTime=new Date().getTime();
+                                        if(currentDateTime<dateStartWithDate.getTime())
+                                        {
+                                            Date date2 = null;
+                                            try {
+                                                date2 = sdf1.parse(strTimeSlots[0].split("-")[0]);
+                                            } catch (ParseException e) {
+                                                e.printStackTrace();
+                                            }
+                                            Date date3 = new Date();
+                                            date3.setTime(date2.getTime());  //add 1 hour in next day
+                                            changeFTime = sdf1.format(date3.getTime()+ 3600000);
+
+                                            strTimeSlots[0] = changeFTime + "-" + strTimeSlots[0].split("-")[1];
+                                        }else
+                                        if(currentDateTime>todayDateTimeEndTime) {
+                                            changeFTime = sdf1.format(currentDateTime);
+                                        }else
+                                        {
+                                            Date date2=new Date();
                                             date2.setTime(todayDateTimeEndTime);
                                             changeFTime = sdf1.format(date2.getTime());
                                         }
                                         strTimeSlots[0] = changeFTime + "-" + strTimeSlots[0].split("-")[1];
-
-
-                                        timeSlots = getTimeSlots(strTimeSlots[0]);
-                                        Date dateEndWithDate = new Date();
-                                        Date dateEnd = null;
+                                        final Date dateEndWithDate= new Date();
+                                        Date dateEnd= null;
                                         try {
                                             dateEnd = sdf1.parse(strTimeSlots[0].split("-")[1]);
                                             dateEndWithDate.setHours(dateEnd.getHours());
@@ -600,35 +626,33 @@ if(!operatorName.isEmpty()) {
                                             e.printStackTrace();
                                         }
 
-                                        if (new Date().getTime() < dateEndWithDate.getTime()) {
+                                       /* final Date dateStartWithDate= new Date();
+                                        Date startTimeDate = null;
+                                        try {
+                                            startTimeDate = sdf1.parse(strTimeSlots[0].split("-")[0]);
+                                            dateStartWithDate.setHours(startTimeDate.getHours());
+                                            dateStartWithDate.setMinutes(startTimeDate.getMinutes());
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }*/
+
+                                        if(currentDateTime<(dateEndWithDate.getTime()-900000)){
+                                            Log.i("todays","in between start and end");
                                             bookAppointmentBinding.tvSelectDateTitle.setVisibility(View.GONE);
                                             bookAppointmentBinding.calendarView.setVisibility(View.GONE);
                                             bookAppointmentBinding.tvSelectTimeSlotTitle.setVisibility(View.VISIBLE);
                                             bookAppointmentBinding.recycleTimeSlot.setVisibility(View.VISIBLE);
                                             bookAppointmentBinding.btnBookNow.setVisibility(View.VISIBLE);
+
                                             timeSlots = getTimeSlots(strTimeSlots[0]);
                                             bookAppointmentBinding.recycleTimeSlot.setAdapter(new BookingTimeSlotAdapter(nActivity, timeSlots, ActivityBookAppointment.this));
-                                        } else {
+                                        }else
+                                        {
+                                            Log.i("todays","closed");
                                             showFailToast(nActivity, getString(R.string.salon_off_time));
                                         }
-                                    } /*else if (date1.getDate() == nextDate.getDate() && date1.getMonth() == nextDate.getMonth() && date1.getYear() == nextDate.getYear()) //next day
-                                    {
-                                        bookAppointmentBinding.tvSelectDateTitle.setVisibility(View.GONE);
-                                        bookAppointmentBinding.calendarView.setVisibility(View.GONE);
-                                        bookAppointmentBinding.tvSelectTimeSlotTitle.setVisibility(View.VISIBLE);
-                                        bookAppointmentBinding.recycleTimeSlot.setVisibility(View.VISIBLE);
-                                        bookAppointmentBinding.btnBookNow.setVisibility(View.VISIBLE);
 
-                                        Date date2=sdf1.parse(strTimeSlots[0].split("-")[0]);
-                                        Date date3=new Date();
-                                        date3.setTime(date2.getTime()+3600000);  //add 1 hour in next day
-                                        changeFTime = sdf1.format(date3.getTime());
-
-                                        strTimeSlots[0] = changeFTime + "-" + strTimeSlots[0].split("-")[1];
-
-                                        timeSlots = getTimeSlots(strTimeSlots[0]);
-                                        bookAppointmentBinding.recycleTimeSlot.setAdapter(new BookingTimeSlotAdapter(nActivity, timeSlots, ActivityBookAppointment.this));
-                                    }*/else  {
+                                    }else  {
                                         String strWeekDay="";
                                         boolean isOneHrNextFlag=false;
                                         switch (strOffDay)
@@ -688,7 +712,7 @@ if(!operatorName.isEmpty()) {
                                             bookAppointmentBinding.tvSelectTimeSlotTitle.setVisibility(View.VISIBLE);
                                             bookAppointmentBinding.recycleTimeSlot.setVisibility(View.VISIBLE);
                                             bookAppointmentBinding.btnBookNow.setVisibility(View.VISIBLE);
-                                            if(!(new Date().getTime()<dateEndWithDate.getTime())) {//when todays time is closed
+                                            if(!(new Date().getTime()<dateEndWithDate.getTime()-900000)) {//when todays time is closed
 
 
                                                 Date date2 = null;
@@ -839,7 +863,7 @@ if(!operatorName.isEmpty()) {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -850,6 +874,10 @@ if(!operatorName.isEmpty()) {
                         if (cartDetailBean.getStatus() == 1) {
                             //results.remove(pos);
                             //notifyDataSetChanged();
+                            Preferences.setPreferenceValue(nActivity, "couponId", "0");
+                            Preferences.setPreferenceValue(nActivity, "couponCode", "");
+                            Preferences.setPreferenceValue(nActivity, "couponDesc", "");
+                            Preferences.setPreferenceValue(nActivity, "couponOffPrice", "0");
                             mDataList.get(pos).setInCart(0);
                             if(globalCartCount==1){
                                 dateTimeOneTime=false;
@@ -898,7 +926,7 @@ if(!operatorName.isEmpty()) {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -916,9 +944,10 @@ if(!operatorName.isEmpty()) {
                             strTime="";
                             strDate="";strAppDate="";
                             Preferences.setPreferenceValue(nActivity, "dateTime","");
-                            Preferences.setPreferenceValue(nActivity,"couponCode","");
-                            Preferences.setPreferenceValue(nActivity,"couponDesc","");
-                            Preferences.setPreferenceValue(nActivity,"couponOffPrice","0");
+                            Preferences.setPreferenceValue(nActivity, "couponId", "0");
+                            Preferences.setPreferenceValue(nActivity, "couponCode", "");
+                            Preferences.setPreferenceValue(nActivity, "couponDesc", "");
+                            Preferences.setPreferenceValue(nActivity, "couponOffPrice", "0");
                             showSuccessToast(nActivity, "" + removeAllCart.getMsg());
                            // Preferences.setPreferenceValue(nActivity, "oneTimeSalonId",branchId);
                             BottomSheetDialogFragment filterBottomSheet = new ActivityBookAppointment();

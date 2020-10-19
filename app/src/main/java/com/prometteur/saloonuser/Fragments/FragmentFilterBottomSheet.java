@@ -39,8 +39,10 @@ import static com.prometteur.saloonuser.Activities.ActivityHomepage.brandsArr;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.highToLow;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.homeBean;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.brands;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.isFilter;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.lowToHigh;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.selectedCats;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.selectedCatsText;
 import static com.prometteur.saloonuser.Constants.ConstantVariables.REDEEMPOINTSKEY;
 import static com.prometteur.saloonuser.Fragments.FragmentListSalonView.catAdapter;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.category;
@@ -50,6 +52,7 @@ import static com.prometteur.saloonuser.Fragments.FragmentListSalonView.filterBo
 import static com.prometteur.saloonuser.Fragments.FragmentListSalonView.getHomeData;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.rating;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.sortBy;
+import static com.prometteur.saloonuser.Fragments.FragmentListSalonView.listSalonBinding;
 import static com.prometteur.saloonuser.Utils.Utils.isNetworkAvailable;
 import static com.prometteur.saloonuser.Utils.Utils.logout;
 import static com.prometteur.saloonuser.Utils.Utils.setEmptyMsg;
@@ -118,6 +121,39 @@ public class FragmentFilterBottomSheet extends BottomSheetDialogFragment impleme
         filterBinding.ivCrossGrey.setOnClickListener(this);
         filterBinding.btnSubmit.setOnClickListener(this);
         filterBinding.btnReset.setOnClickListener(this);
+        gender= Preferences.getPreferenceValue(nActivity, "genderFilter" );
+        category= Preferences.getPreferenceValue(nActivity, "categoryFilter");
+        brands= Preferences.getPreferenceValue(nActivity, "brandsFilter");
+        rating= Preferences.getPreferenceValue(nActivity, "ratingFilter" );
+        discount= Preferences.getPreferenceValue(nActivity, "discountFilter");
+        sortBy= Preferences.getPreferenceValue(nActivity, "sortByFilter");
+        lowToHigh= Preferences.getPreferenceValue(nActivity, "sortByLowToHigh");
+        highToLow= Preferences.getPreferenceValue(nActivity, "sortByHighToLow");
+        if(gender.equalsIgnoreCase("NA"))
+        {
+            gender="";
+        }if(category.equalsIgnoreCase("NA"))
+        {
+            category="";
+        }if(brands.equalsIgnoreCase("NA"))
+        {
+            brands="";
+        }if(rating.equalsIgnoreCase("NA"))
+        {
+            rating="";
+        }if(discount.equalsIgnoreCase("NA"))
+        {
+            discount="";
+        }if(lowToHigh.equalsIgnoreCase("NA"))
+        {
+            lowToHigh="";
+        }if(highToLow.equalsIgnoreCase("NA"))
+        {
+            highToLow="";
+        }if(sortBy.equalsIgnoreCase("NA"))
+        {
+            sortBy="";
+        }
         removeAllTicks();
         getBrandCategoryWise();
         return view;
@@ -130,9 +166,18 @@ public class FragmentFilterBottomSheet extends BottomSheetDialogFragment impleme
             catAdapter.notifyDataSetChanged();
         }
         if (view.getId() == R.id.btnReset) {
+            isFilter=false;
+            if(isFilter)
+            {
+                listSalonBinding.ivFilterimg.setImageResource(R.drawable.ic_filter_filled);
+            }else
+            {
+                listSalonBinding.ivFilterimg.setImageResource(R.drawable.ic_filter_icon);
+            }
             category="";brands="";rating="";discount="";sortBy="";gender="";lowToHigh="";highToLow="";
             brandsArr=new ArrayList<>();
             selectedCats=new ArrayList<>();
+            selectedCatsText=new ArrayList<>();
             Preferences.setPreferenceValue(nActivity, "genderFilter","");
             Preferences.setPreferenceValue(nActivity, "categoryFilter","");
             Preferences.setPreferenceValue(nActivity, "brandsFilter","");
@@ -154,6 +199,10 @@ public class FragmentFilterBottomSheet extends BottomSheetDialogFragment impleme
         }
             if (view.getId() == R.id.btnSubmit) {
                 rating=""+filterBinding.ratingBar.getRating();
+                if(rating.equalsIgnoreCase("0.0"))
+                {
+                    rating="";
+                }
                 if(filterBinding.rgGender!=null) {
                     View view1 = filterBinding.getRoot();
                     RadioButton radioButton = view1.findViewById(filterBinding.rgGender.getCheckedRadioButtonId());
@@ -172,6 +221,23 @@ public class FragmentFilterBottomSheet extends BottomSheetDialogFragment impleme
                 }else
                 {
                     gender="";
+                }
+
+                category=TextUtils.join(",",selectedCats);
+                brands=TextUtils.join(",",brandsArr);
+                if(!category.equalsIgnoreCase("") || !brands.equalsIgnoreCase("") || !rating.equalsIgnoreCase("") || !discount.equalsIgnoreCase("") ||!sortBy.equalsIgnoreCase("") || !gender.equalsIgnoreCase("") ||!lowToHigh.equalsIgnoreCase("")||!highToLow.equalsIgnoreCase("")||!gender.equalsIgnoreCase("")||!rating.equalsIgnoreCase(""))
+                {
+                    isFilter=true;
+                }else
+                {
+                    isFilter=false;
+                }
+                if(isFilter)
+                {
+                    listSalonBinding.ivFilterimg.setImageResource(R.drawable.ic_filter_filled);
+                }else
+                {
+                    listSalonBinding.ivFilterimg.setImageResource(R.drawable.ic_filter_icon);
                 }
                 Preferences.setPreferenceValue(nActivity, "genderFilter",gender);
                 Preferences.setPreferenceValue(nActivity, "categoryFilter",TextUtils.join(",",selectedCats));
@@ -260,12 +326,15 @@ public class FragmentFilterBottomSheet extends BottomSheetDialogFragment impleme
                 if (selectedCats.contains("0"))
                 {
                     selectedCats.remove("0");
+                    selectedCatsText=new ArrayList<>();
                 }
                 if (!selectedCats.contains("1")) {
                     setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbHair);
+                    selectedCatsText.add("Hair");
                     selectedCats.add("1");
                 } else {
                     removeDrawableCheckbox(filterBinding.cbHair);
+                    selectedCatsText.remove("Hair");
                     selectedCats.remove("1");
                 }
                 getBrandCategoryWise();
@@ -274,13 +343,16 @@ public class FragmentFilterBottomSheet extends BottomSheetDialogFragment impleme
                 if (selectedCats.contains("0"))
                 {
                     selectedCats.remove("0");
+                    selectedCatsText=new ArrayList<>();
                 }
                 if (!selectedCats.contains("2")) {
                     setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbSkin);
+                    selectedCatsText.add("Skin");
                     selectedCats.add("2");
                 } else {
                     removeDrawableCheckbox(filterBinding.cbSkin);
                     selectedCats.remove("2");
+                    selectedCatsText.remove("Skin");
                 }
                 getBrandCategoryWise();
                 break;
@@ -288,13 +360,16 @@ public class FragmentFilterBottomSheet extends BottomSheetDialogFragment impleme
                 if (selectedCats.contains("0"))
                 {
                     selectedCats.remove("0");
+                    selectedCatsText=new ArrayList<>();
                 }
                 if (!selectedCats.contains("3")) {
                     setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbNails);
                     selectedCats.add("3");
+                    selectedCatsText.add("Nails");
                 } else {
                     removeDrawableCheckbox(filterBinding.cbNails);
                     selectedCats.remove("3");
+                    selectedCatsText.remove("Nails");
                 }
                 getBrandCategoryWise();
                 break;
@@ -302,13 +377,16 @@ public class FragmentFilterBottomSheet extends BottomSheetDialogFragment impleme
                 if (selectedCats.contains("0"))
                 {
                     selectedCats.remove("0");
+                    selectedCatsText=new ArrayList<>();
                 }
                 if (!selectedCats.contains("4")) {
                     setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbSpa);
                     selectedCats.add("4");
+                    selectedCatsText.add("Spa");
                 } else {
                     removeDrawableCheckbox(filterBinding.cbSpa);
                     selectedCats.remove("4");
+                    selectedCatsText.remove("Spa");
                 }
                 getBrandCategoryWise();
                 break;
@@ -316,13 +394,16 @@ public class FragmentFilterBottomSheet extends BottomSheetDialogFragment impleme
                 if (selectedCats.contains("0"))
                 {
                     selectedCats.remove("0");
+                    selectedCatsText=new ArrayList<>();
                 }
                 if (!selectedCats.contains("5")) {
                     setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbMakeup);
                     selectedCats.add("5");
+                    selectedCatsText.add("Makeup");
                 } else {
                     removeDrawableCheckbox(filterBinding.cbMakeup);
                     selectedCats.remove("5");
+                    selectedCatsText.remove("Makeup");
                 }
                 getBrandCategoryWise();
                 break;
@@ -430,23 +511,30 @@ public class FragmentFilterBottomSheet extends BottomSheetDialogFragment impleme
         removeDrawableCheckbox(filterBinding.cbSpa);
         removeDrawableCheckbox(filterBinding.cbNails);
         removeDrawableCheckbox(filterBinding.cbMakeup);
+if(category.isEmpty()) {
+    selectedCatsText=new ArrayList<>();
+    selectedCats=new ArrayList<>();
+}
+    if (selectedCatsText.contains("Hair")) {
+        setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbHair);
+    }
+    if (selectedCatsText.contains("Skin")) {
+        setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbSkin);
+    }
+    if (selectedCatsText.contains("Nails")) {
+        setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbNails);
+    }
+    if (selectedCatsText.contains("Spa")) {
+        setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbSpa);
+    }
+    if (selectedCatsText.contains("Makeup")) {
+        setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbMakeup);
+    }
 
-        if(selectedCats.contains("1")){
-            setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbHair);
-        }
-        if(selectedCats.contains("2")){
-            setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbSkin);
-        }
-        if(selectedCats.contains("3")){
-            setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbNails);
-        }
-        if(selectedCats.contains("4")){
-            setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbSpa);
-        }
-        if(selectedCats.contains("5")){
-            setDrawableTextView(R.drawable.ic_check_black_24dp, filterBinding.cbMakeup);
-        }
-        getBrandCategoryWise();
+if(brands.isEmpty()) {
+    brandsArr=new ArrayList<>();
+}
+    getBrandCategoryWise();
 
         if(!rating.isEmpty())
         {
@@ -512,7 +600,7 @@ public class FragmentFilterBottomSheet extends BottomSheetDialogFragment impleme
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, getResources().getString(R.string.went_wrong));
+                      //  showFailToast(nActivity, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override

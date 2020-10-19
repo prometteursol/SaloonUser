@@ -15,6 +15,8 @@ import com.prometteur.saloonuser.Utils.TextViewCustomFont;
 
 import java.util.List;
 
+import static com.prometteur.saloonuser.Constants.ConstantMethods.getStrikeString;
+
 public class ServiceSelectedAdapter extends RecyclerView.Adapter<ServiceSelectedAdapter.ViewHolder> {
 
     Activity nActivity;
@@ -51,6 +53,17 @@ public class ServiceSelectedAdapter extends RecyclerView.Adapter<ServiceSelected
             holder.tvServiceOperatorTitle.setVisibility(View.GONE);
         }
         holder.tvServiceCost.setText("₹ " +services.get(position).getSrvcPrice());
+        holder.tvServiceCost.setTextColor(nActivity.getResources().getColor(R.color.black));
+        if(services.get(position).getSrvcDiscountPrice()!=null && !services.get(position).getSrvcDiscountPrice().isEmpty() && !services.get(position).getSrvcDiscountPrice().equalsIgnoreCase("0.00")) {
+            holder.tvServiceDiscountCost.setText("₹ " + services.get(position).getSrvcPrice());
+            holder.tvServiceCost.setText("₹ " +services.get(position).getSrvcDiscountPrice());
+            holder.tvServiceCost.setTextColor(nActivity.getResources().getColor(R.color.skyBlueLight));
+            holder.tvServiceDiscountCost.setVisibility(View.VISIBLE);
+            getStrikeString(holder.tvServiceDiscountCost);
+        }else
+        {
+            holder.tvServiceDiscountCost.setVisibility(View.GONE);
+        }
 
     }
 
@@ -63,6 +76,7 @@ public class ServiceSelectedAdapter extends RecyclerView.Adapter<ServiceSelected
         TextViewCustomFont tvSerialNo;
         TextViewCustomFont tvService;
         TextViewCustomFont tvServiceCost;
+        TextViewCustomFont tvServiceDiscountCost;
         TextViewCustomFont tvServiceBrandtitle;
         TextViewCustomFont tvServiceOperatorTitle;
         TextViewCustomFont tvServiceBrand;
@@ -79,6 +93,7 @@ public class ServiceSelectedAdapter extends RecyclerView.Adapter<ServiceSelected
             tvServiceBrandtitle = itemView.findViewById(R.id.tvServiceBrandtitle);
             tvServiceOperator = itemView.findViewById(R.id.tvServiceOperator);
             tvServiceOperatorTitle = itemView.findViewById(R.id.tvServiceOperatorTitle);
+            tvServiceDiscountCost = itemView.findViewById(R.id.tvServiceDiscountCost);
 
         }
     }

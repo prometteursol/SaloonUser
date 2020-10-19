@@ -262,7 +262,10 @@ public interface ApiInterface {
             @Field("apt_penality") String aptPenality,
             @Field("apt_redeem_point") String aptRedeemPoint,
             @Field("apt_service_charges") String aptServiceCharges,
-            @Field("apt_coupon_price") String apt_coupon_price
+            @Field("apt_coupon_price") String apt_coupon_price,
+            @Field("apt_mooi_discount") String aptMooiDiscount,
+            @Field("apt_discount") String aptDiscount,
+            @Field("apt_payment_status") String aptPaymentStatus
     );
 
     @FormUrlEncoded

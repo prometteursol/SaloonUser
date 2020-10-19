@@ -13,7 +13,7 @@
         android:layout_marginStart="@dimen/_8sdp"
         android:layout_marginTop="@dimen/_1sdp"
         android:scaleType="fitXY"
-        android:src="@drawable/img_login"
+        android:src="@drawable/placeholder_gray_corner"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

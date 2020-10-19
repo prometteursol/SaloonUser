@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -35,6 +37,7 @@ import com.prometteur.saloonuser.Model.LoginBean;
 import com.prometteur.saloonuser.Model.UpdateLocationBean;
 import com.prometteur.saloonuser.Model.UpodatePassBean;
 import com.prometteur.saloonuser.R;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.Utils.Preferences;
 import com.prometteur.saloonuser.databinding.ActivityAccountsSettingsBinding;
 import com.prometteur.saloonuser.databinding.DialogPasswordChangeBinding;
@@ -104,7 +107,7 @@ public class ActivityAccountsSettings extends AppCompatActivity implements View.
                 showCancelRequestDialog(this);
                 break;
                 case R.id.tvMyLocation:case R.id.tvLocationText:case R.id.ivLocArrow:
-                getStartPlaceLocation();
+                //getStartPlaceLocation();
                 break;
             case R.id.tvLogOut:
 
@@ -240,7 +243,7 @@ public class ActivityAccountsSettings extends AppCompatActivity implements View.
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ActivityAccountsSettings.this, getResources().getString(R.string.went_wrong));
+                        //showFailToast(ActivityAccountsSettings.this, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -354,7 +357,7 @@ public class ActivityAccountsSettings extends AppCompatActivity implements View.
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ActivityAccountsSettings.this, getResources().getString(R.string.went_wrong));
+                        //showFailToast(ActivityAccountsSettings.this, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -375,5 +378,27 @@ public class ActivityAccountsSettings extends AppCompatActivity implements View.
                 });
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
+
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
     }
 }

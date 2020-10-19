@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.SystemClock;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.menuPos;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.strLat;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.strLong;
 import static com.prometteur.saloonuser.Constants.ConstantVariables.USERIDVAL;
@@ -80,7 +82,21 @@ public class FragmentAppointmentCompleted extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        appCompletedBinding.pullToRefresh.setNestedScrollingEnabled(false);
+        appCompletedBinding.pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to make your refresh action
+                if (isNetworkAvailable(nActivity)) {
+                    getAppointments();
+                } else {
+                    showNoInternetDialog(nActivity);
+                }
+                if(appCompletedBinding.pullToRefresh.isRefreshing()) {
+                    appCompletedBinding.pullToRefresh.setRefreshing(false);
+                }
+            }
+        });
         if (isNetworkAvailable(nActivity)) {
             getAppointments();
         } else {
@@ -101,7 +117,9 @@ public class FragmentAppointmentCompleted extends Fragment {
         results=new ArrayList<>();
         final ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
         final Dialog progressDialog = showProgress(nActivity, 0);
-        //progressDialog.show();
+        if(menuPos ==2) {
+            progressDialog.show();
+        }
         service.getAppointments(USERIDVAL,"4",strLat,strLong)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -120,7 +138,7 @@ public class FragmentAppointmentCompleted extends Fragment {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override

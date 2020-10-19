@@ -207,7 +207,7 @@ int strCancelRed=0;
             rbSalonRating.setRating(Float.parseFloat(appointmentData.getSalonRating()));
         }
         if(appointmentData.getBranImg()!=null) {
-            Glide.with(mContext).load(appointmentData.getBranImg()).into(rivSaloonImage);
+            Glide.with(mContext).load(appointmentData.getBranImg()).placeholder(R.drawable.placeholder_gray_corner).error(R.drawable.placeholder_gray_corner).into(rivSaloonImage);
         }
 
         if(appointmentData.getAptStatus().equalsIgnoreCase("0"))
@@ -326,7 +326,7 @@ int strCancelRed=0;
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(mContext, mContext.getResources().getString(R.string.went_wrong));
+                       // showFailToast(mContext, mContext.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -350,7 +350,7 @@ int strCancelRed=0;
 
 
     CheckPenaltyBean checkPenaltyBean;
-    String penaltyAmt="0",penaltyPer="0";
+    String penaltyAmt="0",penaltyPer="0",psStartTime="",psEndTime="";
     private void getCheckPenalty() {
 
         final ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
@@ -378,7 +378,7 @@ int strCancelRed=0;
                         if(progressDialog!=null && progressDialog.isShowing()) {
                             progressDialog.dismiss();
                         }
-                        showFailToast(mContext, mContext.getResources().getString(R.string.went_wrong));
+                     //   showFailToast(mContext, mContext.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -392,6 +392,8 @@ int strCancelRed=0;
                             if(checkPenaltyBean.getPenaltyPercentage().size()!=0) {
                                 penaltyPer = checkPenaltyBean.getPenaltyPercentage().get(0);
                                 penaltyAmt = checkPenaltyBean.getResult().get(0);
+                                psStartTime = checkPenaltyBean.getPsStartTime();
+                                psEndTime = checkPenaltyBean.getPsEndTime();
                                 if (!penaltyPer.equalsIgnoreCase("0")) {
                                     showCancelRequestDialog((Activity) mContext,penaltyPer);
                                 } else {
@@ -424,7 +426,8 @@ int strCancelRed=0;
         window.setAttributes(wlp);
         dialogCancelAppointment.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT);
-        if(penaltyPer.equalsIgnoreCase("50"))
+        cancellationBinding.tvPenaltydesc.setText("Cancellation Time > "+psStartTime+"-"+psEndTime+" Hr > "+penaltyPer+"%");
+        /*if(penaltyPer.equalsIgnoreCase("50"))
         {
             cancellationBinding.tvPenaltydesc.setText("Cancellation Time > 1-4 Hr > 50%");
         }else if(penaltyPer.equalsIgnoreCase("25"))
@@ -433,7 +436,7 @@ int strCancelRed=0;
         }else if(penaltyPer.equalsIgnoreCase("10"))
         {
             cancellationBinding.tvPenaltydesc.setText("Cancellation Time > 8-16 Hr > 10%");
-        }
+        }*/
 
         cancellationBinding.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -553,7 +556,7 @@ int strCancelRed=0;
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(mContext, mContext.getResources().getString(R.string.went_wrong));
+                      //  showFailToast(mContext, mContext.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -562,7 +565,9 @@ int strCancelRed=0;
                         progressDialog.dismiss();
 
                         if (appintPaidStatus.getStatus() == 1) {
-                            showSuccessToast(mContext,"Payment completed successfully");
+                            if(strPaymentType.equalsIgnoreCase("1")) {
+                                showSuccessToast(mContext, "Payment completed successfully");
+                            }
                             //getAppointDetails();
                             btnPayNow.setVisibility(View.GONE);
                         } else if (appintPaidStatus.getStatus() == 3) {
@@ -595,7 +600,7 @@ int strCancelRed=0;
 
     public void startPayment(String orderId) {    /**   * Instantiate Checkout   */
         Checkout checkout = new Checkout();  /**   * Set your logo here   */
-        checkout.setImage(R.drawable.ic_launcher_background);  /**   * Reference to current activity   */
+        checkout.setImage(R.mipmap.ic_launcher);  /**   * Reference to current activity   */
         final Activity activity = (Activity) mContext;  /**   * Pass your payment options to the Razorpay Checkout as a JSONObject   */
 
         try {
@@ -639,7 +644,7 @@ int strCancelRed=0;
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        Toast.makeText(nActivity, getResources().getString(R.string.went_wrong), Toast.LENGTH_SHORT).show();
+                      //  Toast.makeText(nActivity, getResources().getString(R.string.went_wrong), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override

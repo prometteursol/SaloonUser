@@ -1,6 +1,8 @@
 package com.prometteur.saloonuser.Activities;
 
 import android.app.Dialog;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +17,7 @@ import com.prometteur.saloonuser.Adapter.ReviewListAdapter;
 import com.prometteur.saloonuser.Model.PointBalanceBean;
 import com.prometteur.saloonuser.Model.ReviewDetailsBean;
 import com.prometteur.saloonuser.R;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.databinding.ActivityPointBalanceBinding;
 import com.prometteur.saloonuser.databinding.ActivityReferAndEarnBinding;
 import com.prometteur.saloonuser.retrofit.ApiInterface;
@@ -116,7 +119,7 @@ mDataList=new ArrayList<>();
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(PointBalanceActivity.this, getResources().getString(R.string.went_wrong));
+                       // showFailToast(PointBalanceActivity.this, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -130,7 +133,7 @@ mDataList=new ArrayList<>();
                                 activityPointBalanceBinding.tvBalance.setText(reviewDetailsBean.getBalance() + " Points");
                             }else
                             {
-                                activityPointBalanceBinding.tvBalance.setText("XXX Points");
+                                activityPointBalanceBinding.tvBalance.setText("0 Points");
                             }
 
                             activityPointBalanceBinding.rvPointBalance.setLayoutManager(new LinearLayoutManager(PointBalanceActivity.this));
@@ -144,5 +147,25 @@ mDataList=new ArrayList<>();
                     }
                 });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
 
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
+    }
 }

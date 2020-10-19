@@ -56,19 +56,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
         USERIDVAL = com.prometteur.saloonuser.Utils.Preferences.getPreferenceValue(MyFirebaseMessagingService.this, USERID);
         USERSESSIONVAL = Preferences.getPreferenceValue(MyFirebaseMessagingService.this, USERSESSION);
-        Intent intent = new Intent(this, ActivityAppointmentDetails.class);
-        if(remoteMessage.getData().get("noti_appointment_id")!=null) {
+        Intent intent1 = new Intent(this, ActivityAppointmentDetails.class);
+        if(remoteMessage.getData().get("noti_appointment_id")!=null) {//noti_appointment_id=1129
 
-            intent.putExtra("appId", "" + remoteMessage.getData().get("noti_appointment_id"));
-            intent.putExtra("notiId", "" + remoteMessage.getData().get("noti_id"));
+           /* intent.putExtra("appId", "" + remoteMessage.getData().get("noti_appointment_id"));
+            intent.putExtra("notiId", "" + remoteMessage.getData().get("noti_id"));*/
 
-            Intent intent1 = new Intent(MyFirebaseMessagingService.this, ActivityAppointmentDetails.class);
+            // intent1 = new Intent(MyFirebaseMessagingService.this, ActivityAppointmentDetails.class);
             intent1.putExtra("appId", "" + remoteMessage.getData().get("noti_appointment_id"));
             intent1.putExtra("notiId", "" + remoteMessage.getData().get("noti_id"));
             intent1.addFlags(FLAG_ACTIVITY_NEW_TASK);
-            intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            /* intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);*/
             Log.i("push notification","MyFirebaseMessagingService");
             startActivity(intent1);
+
         }
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -89,9 +90,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if (null != remoteMessage) {
                 /* if (remoteMessage.getData().get("messageids").contains(userId)) {*/
                 Log.i("remoteData",remoteMessage.getData().toString());
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                        PendingIntent.FLAG_ONE_SHOT);
+                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationID, intent1,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
                         R.drawable.salon_logo_tr);

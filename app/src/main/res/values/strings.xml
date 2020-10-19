@@ -74,13 +74,13 @@
     <string name="my_appointment_history">My Appointment History</string>
     <string name="accounts_amp_settings"><![CDATA[Accounts & Settings]]></string>
     <string name="view_all_your_bookings_and_purchases">View all your bookings and purchases</string>
-    <string name="location_notifications_amp_more"><![CDATA[Location, Notifications & more]]></string>
+    <string name="location_notifications_amp_more"><![CDATA[Location & more]]></string>
     <string name="blog">Blog</string>
     <string name="refer_amp_earn"><![CDATA[Refer & Earn]]></string>
     <string name="help">Help</string>
     <string name="customer_support">Customer Support</string>
     <string name="about">About</string>
-    <string name="rate_us">Rate us</string>
+    <string name="rate_us">Rate Us</string>
     <string name="my_location">My Location</string>
     <string name="notifications">Notifications</string>
     <string name="logout">Logout</string>
@@ -89,7 +89,7 @@
     <string name="combo_amp_offers"><![CDATA[Combo & Offers]]></string>
     <string name="rs">₹</string>
     <string name="combo_name">Combo Name</string>
-    <string name="services">Services</string>
+    <string name="services">Menu</string>
     <string name="add_select_operator">+ Select Operator</string>
     <string name="minus_Remove_operator">- Remove</string>
     <string name="Price_">Price :</string>
@@ -151,4 +151,15 @@
     <string name="salon_off">Salon is not accepting booking on selected date</string>
     <string name="salon_off_time">Salon is closed now choose another date to proceed</string>
     <string name="email_or_mobile_number">Email</string>
+    By signing up you agree to our privacy policy and terms of services.
+    <string name="terms_conditions">By signing up you agree to our privacy policy and terms of services.</string>
+
+    <string name="about_us"><pre>Who loves being pampered ? we do !<br/><br/>
+Nothing can replace the awesome feeling we get after a relaxing SPA or a grooming session at the Salon. Most of us prefer to visit a particular Salon/SPA regularly. But what really prevents us from trying something new ? Is it a lack of trust and information about the new facility ? Do they use my preferred products ? Are the therapists good enough for me ? Are there offers, even at my existing Salon ?\n\n
+        Well, As an answer to such questions and much more we present to you <b>mooi</b> (pronounced as moy/मॉय)\n\n
+mooi aims to enhance your grooming and relaxation experience through a platform that answers all the above and lets you book your appointments with your preferred Salon and Spa at the click of a button.\n\n
+mooi lets you search Salon/SPA by their locality, give you trusted ratings from people who have completed services, details of brands etc. etc.\n\n
+Wait ! it\'s not over, you can book services with your preferred therapist, for a particular brand of product at your preferred time. To top it all you pay only after completion of the service at the Salon or on our payment gateway in which case you earn exciting reward points.\n\n
+Let\'s enjoy this beautiful and relaxed journey together !\n\n
+        mooi !</pre></string>
 </resources>

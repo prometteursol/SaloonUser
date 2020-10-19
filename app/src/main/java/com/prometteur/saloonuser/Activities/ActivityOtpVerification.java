@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.Gravity;
@@ -52,8 +53,13 @@ public class ActivityOtpVerification extends AppCompatActivity {
         View view = otpBinding.getRoot();
         setContentView(view);
         mContext=this;
-
-
+        int currentapiVersion = Build.VERSION.SDK_INT;
+        if(currentapiVersion>=Build.VERSION_CODES.P)
+        {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+        }
 
         if(getIntent().getStringExtra("from").equalsIgnoreCase("signUp")){
             otpBinding.tvEmailOrMobNoText.setText("Please verify your mobile number to continue, OTP sent on Mobile Number*");
@@ -216,7 +222,7 @@ public class ActivityOtpVerification extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(mContext,  getResources().getString(R.string.went_wrong));
+                       // showFailToast(mContext,  getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -258,7 +264,7 @@ public class ActivityOtpVerification extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ActivityOtpVerification.this,  getResources().getString(R.string.went_wrong));
+                      //  showFailToast(ActivityOtpVerification.this,  getResources().getString(R.string.went_wrong));
                     }
 
                     @Override

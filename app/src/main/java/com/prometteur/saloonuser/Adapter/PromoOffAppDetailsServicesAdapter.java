@@ -14,15 +14,18 @@ import com.prometteur.saloonuser.Utils.TextViewCustomFont;
 
 import java.util.List;
 
+import static com.prometteur.saloonuser.Constants.ConstantMethods.getStrikeString;
+
 public class PromoOffAppDetailsServicesAdapter extends RecyclerView.Adapter<PromoOffAppDetailsServicesAdapter.ViewHolder> {
 
     AppCompatActivity nActivity;
 
     boolean bottomlist;
     List<AppointDetailBean.Service> results;
-
-    public PromoOffAppDetailsServicesAdapter(AppCompatActivity nActivity, List<AppointDetailBean.Service> results, boolean bottomlist) {
+    AppointDetailBean.PromotionalService promotionalServices;
+    public PromoOffAppDetailsServicesAdapter(AppCompatActivity nActivity, AppointDetailBean.PromotionalService promotionalServices, List<AppointDetailBean.Service> results, boolean bottomlist) {
         this.nActivity = nActivity;
+        this.promotionalServices=promotionalServices;
         this.results=results;
         this.bottomlist=bottomlist;
     }
@@ -50,6 +53,16 @@ public class PromoOffAppDetailsServicesAdapter extends RecyclerView.Adapter<Prom
             holder.tvServiceBrand.setVisibility(View.GONE);
         }
         holder.tvServiceCost.setText("₹ " +results.get(position).getSrvcPrice());
+        if(promotionalServices.getProofferDiscountPrice()!=null && !promotionalServices.getProofferDiscountPrice().isEmpty() && !promotionalServices.getProofferDiscountPrice().equalsIgnoreCase("0.00")) {
+            holder.tvServiceDiscountCost.setText("₹ " + promotionalServices.getProofferPrice());
+            holder.tvServiceCost.setText("₹ " +promotionalServices.getProofferDiscountPrice());
+            holder.tvServiceCost.setTextColor(nActivity.getResources().getColor(R.color.skyBlueLight));
+            holder.tvServiceDiscountCost.setVisibility(View.VISIBLE);
+            getStrikeString(holder.tvServiceDiscountCost);
+        }else
+        {
+            holder.tvServiceDiscountCost.setVisibility(View.GONE);
+        }
 
         if(results.get(position).getUserFName()!=null && results.get(position).getUserLName()!=null) {
             holder.tvServiceOperator.setText("" + results.get(position).getUserFName() + " " + results.get(position).getUserLName());
@@ -79,6 +92,7 @@ public class PromoOffAppDetailsServicesAdapter extends RecyclerView.Adapter<Prom
         TextViewCustomFont tvServiceOperator;
         TextViewCustomFont tvAddedOperatorName;
         TextViewCustomFont tvServiceCost;
+        TextViewCustomFont tvServiceDiscountCost;
         TextViewCustomFont tvServiceBrandtitle;
         TextViewCustomFont tvServiceOperatorTitle;
 
@@ -91,6 +105,7 @@ public class PromoOffAppDetailsServicesAdapter extends RecyclerView.Adapter<Prom
             tvServiceOperator = itemView.findViewById(R.id.tvServiceOperator);
             tvAddedOperatorName = itemView.findViewById(R.id.tvAddedOperatorName);
             tvServiceCost = itemView.findViewById(R.id.tvServiceCost);
+            tvServiceDiscountCost = itemView.findViewById(R.id.tvServiceDiscountCost);
             tvServiceBrandtitle = itemView.findViewById(R.id.tvServiceBrandtitle);
             tvServiceOperatorTitle = itemView.findViewById(R.id.tvServiceOperatorTitle);
         }

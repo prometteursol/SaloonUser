@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.prometteur.saloonuser.Activities.ActivityAboutUs;
 import com.prometteur.saloonuser.Activities.ActivityAccountsSettings;
 import com.prometteur.saloonuser.Activities.ActivityCustomerSupport;
 import com.prometteur.saloonuser.Activities.ActivityHomepage;
@@ -31,6 +32,7 @@ import static com.prometteur.saloonuser.Constants.ConstantVariables.REDEEMPOINTS
 import static com.prometteur.saloonuser.Constants.ConstantVariables.USERFNAME;
 import static com.prometteur.saloonuser.Constants.ConstantVariables.USERLNAME;
 import static com.prometteur.saloonuser.Constants.ConstantVariables.USERPROFILE;
+import static com.prometteur.saloonuser.Utils.Utils.showFailToast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,6 +70,12 @@ public class FragmentMyAccounts extends Fragment implements View.OnClickListener
         myAccountsBinding.ivReferEarnGo.setOnClickListener(this);
         myAccountsBinding.ivReferEarn.setOnClickListener(this);
         myAccountsBinding.Conlay0.setOnClickListener(this);
+        myAccountsBinding.tvAbout.setOnClickListener(this);
+        myAccountsBinding.relTermsAndCondition.setOnClickListener(this);
+        myAccountsBinding.relPrivacyPolicy.setOnClickListener(this);
+        myAccountsBinding.tvHelpTitle.setOnClickListener(this);
+        myAccountsBinding.ivHelp.setOnClickListener(this);
+        myAccountsBinding.ivHelpGo.setOnClickListener(this);
 
         return view;
     }
@@ -88,7 +96,7 @@ public class FragmentMyAccounts extends Fragment implements View.OnClickListener
         }
         myAccountsBinding.tvRedeemPoints.setText(Preferences.getPreferenceValue(nActivity, REDEEMPOINTSKEY)+" Pt.");
         try {
-            Glide.with(nActivity).load(USERPROFILE).error(R.drawable.img_profile).into(myAccountsBinding.civUserProfile);
+            Glide.with(nActivity).load(USERPROFILE).placeholder(R.drawable.placeholder_white_circle).error(R.drawable.placeholder_white_circle).into(myAccountsBinding.civUserProfile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -147,6 +155,11 @@ public class FragmentMyAccounts extends Fragment implements View.OnClickListener
                 mLastClickTimeRef = SystemClock.elapsedRealtime();
                 startActivity(new Intent(nActivity, RefferAndEarnActivity.class));
                 break;
+                case R.id.tvHelpTitle:
+            case R.id.ivHelp:
+            case R.id.ivHelpGo:
+                openWebPage("https://mooi.app/our-policy/Mooi_faq.html");
+                break;
             case R.id.tvRateUs:
                 Uri uri = Uri.parse("market://details?id=" + nActivity.getPackageName());
                 Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
@@ -162,7 +175,27 @@ public class FragmentMyAccounts extends Fragment implements View.OnClickListener
                             Uri.parse("http://play.google.com/store/apps/details?id=" + nActivity.getPackageName())));
                 }
                 break;
+            case R.id.tvAbout:
+                startActivity(new Intent(nActivity, ActivityAboutUs.class));
+                break;
+                case R.id.relTermsAndCondition:
+                    openWebPage("https://mooi.app/our-policy/Mooi_User_Terms_of_Services.html");
+                break;
+                case R.id.relPrivacyPolicy:
+                    openWebPage("https://mooi.app/our-policy/Mooi_User_Privacy%20Policy.html");
+                break;
         }
 
+    }
+
+    public void openWebPage(String url) {
+        try {
+            Uri webpage = Uri.parse(url);
+            Intent myIntent = new Intent(Intent.ACTION_VIEW, webpage);
+            startActivity(myIntent);
+        } catch (ActivityNotFoundException e) {
+            showFailToast(nActivity, "No application can handle this request. Please install a web browser or check your URL.");
+            e.printStackTrace();
+        }
     }
 }

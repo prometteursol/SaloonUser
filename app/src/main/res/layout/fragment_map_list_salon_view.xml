@@ -47,7 +47,7 @@
                         android:layout_marginTop="0dp"
                         android:text="@string/loading"
                         android:textColor="@color/white"
-                        android:textSize="15sp" />
+                        android:textSize="15dp" />
 
                     <com.prometteur.saloonuser.Utils.TextViewCustomFont
                         android:id="@+id/tvUserAddress"
@@ -57,7 +57,7 @@
                         android:layout_marginTop="0dp"
                         android:text="Select Location >"
                         android:textColor="@color/white"
-                        android:textSize="11sp"
+                        android:textSize="13dp"
                         android:visibility="gone"/>
                     <com.prometteur.saloonuser.Utils.TextViewCustomFont
                         android:id="@+id/tvUserAddressTemp"
@@ -65,9 +65,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="0dp"
-                        android:text="Search Location >"
+                        android:text="Select Location >"
                         android:textColor="@color/white"
-                        android:textSize="11sp" />
+                        android:textSize="13dp" />
                 </LinearLayout>
 
                 <ImageView

@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.SystemClock;
 import android.view.LayoutInflater;
@@ -88,6 +89,21 @@ public class FragmentAppointmantCancelled extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        appointmentCanceledBinding.pullToRefresh.setNestedScrollingEnabled(false);
+        appointmentCanceledBinding.pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to make your refresh action
+                if (isNetworkAvailable(nActivity)) {
+                    getAppointments();
+                } else {
+                    showNoInternetDialog(nActivity);
+                }
+                if(appointmentCanceledBinding.pullToRefresh.isRefreshing()) {
+                    appointmentCanceledBinding.pullToRefresh.setRefreshing(false);
+                }
+            }
+        });
         if (isNetworkAvailable(nActivity)) {
             getAppointments();
         } else {
@@ -122,7 +138,7 @@ public class FragmentAppointmantCancelled extends Fragment {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override

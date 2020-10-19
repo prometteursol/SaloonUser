@@ -79,7 +79,7 @@
         android:textColor="@color/black"
         android:layout_marginTop="@dimen/_5sdp"
         android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginEnd="@dimen/_48sdp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
@@ -89,7 +89,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_2sdp"
-        android:layout_marginEnd="@dimen/_48sdp"
+        android:layout_marginEnd="10dp"
         android:text=""
         android:textColor="@color/grey"
         android:textSize="13sp"
@@ -102,6 +102,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/ic_grey_goright"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/tvLocationText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvMyLocation"
@@ -117,6 +118,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvLocationText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
         />
 
     <com.prometteur.saloonuser.Utils.TextViewCustomFont
@@ -134,7 +136,8 @@
         app:layout_constraintTop_toBottomOf="@+id/viewbg1"
         app:layout_constraintStart_toStartOf="@+id/tvMyLocation"
         app:layout_constraintEnd_toEndOf="@+id/tvMyLocation"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"/>
     <Switch
         android:id="@+id/notificationSwitch"
         android:layout_width="0dp"
@@ -144,7 +147,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/tvNotificationTitle"
         app:layout_constraintStart_toEndOf="@+id/tvNotificationTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        android:checked="true"/>
+        android:checked="true"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
     <View

@@ -47,7 +47,7 @@ public class OperatorsListAdapter extends RecyclerView.Adapter<OperatorsListAdap
 
        // holder.bind(position, listener, holder.tvOperatorName.getText().toString(), holder.conlayMainOperatorList);
         holder.tvOperatorName.setText(operators.get(position).getUserFName()+" "+operators.get(position).getUserLName());
-        Glide.with(nActivity).load(operators.get(position).getUserImg()).placeholder(R.drawable.img_profile).error(R.drawable.img_profile).into(holder.civ_OperatorImage);
+        Glide.with(nActivity).load(operators.get(position).getUserImg()).placeholder(R.drawable.placeholder_gray_circle).error(R.drawable.placeholder_gray_circle).into(holder.civ_OperatorImage);
         holder.conlayMainOperatorList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

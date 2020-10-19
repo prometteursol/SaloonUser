@@ -22,6 +22,8 @@ import com.github.siyamed.shapeimageview.RoundedImageView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.prometteur.saloonuser.Utils.Utils.showFailToast;
+
 public class ViewPagerSliderAdapter extends PagerAdapter {
     private static final String TAG = "ViewPagerSliderAdapter";
 
@@ -61,17 +63,14 @@ public class ViewPagerSliderAdapter extends PagerAdapter {
         View itemView = nLayoutInflater.inflate(R.layout.pager_slider_item, container, false);
 
         RoundedImageView imageView = itemView.findViewById(R.id.rimSlideImage);
-         Glide.with(nContext).load(advertisementList.get(position).getAdvImg()).error(R.drawable.img_login).into(imageView);
+         Glide.with(nContext).load(advertisementList.get(position).getAdvImg()).error(R.drawable.img_mooi_logo_bg).into(imageView);
 itemView.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
         String url =advertisementList.get(position).getAdvUrl();
         try {
             if(!url.isEmpty()) {
-                Uri uri = Uri.parse("googlechrome://navigate?url=" + url);
-                Intent i = new Intent(Intent.ACTION_VIEW, uri);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                nContext.startActivity(i);
+                openWebPage(url);
             }
         } catch (ActivityNotFoundException e) {
             // Chrome is probably not installed
@@ -88,4 +87,14 @@ itemView.setOnClickListener(new View.OnClickListener() {
         container.removeView((ConstraintLayout) object);
     }
 
+    public void openWebPage(String url) {
+        try {
+            Uri webpage = Uri.parse(url);
+            Intent myIntent = new Intent(Intent.ACTION_VIEW, webpage);
+            nContext.startActivity(myIntent);
+        } catch (ActivityNotFoundException e) {
+            showFailToast(nContext, "No application can handle this request. Please install a web browser or check your URL.");
+            e.printStackTrace();
+        }
+    }
 }

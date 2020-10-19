@@ -106,25 +106,36 @@ public class SalonListAdapter extends RecyclerView.Adapter<SalonListAdapter.View
         {
             holder.rbSalonRating.setRating(0);
         }
-        if(homeResultList.get(position).getDiscount()!=null) {
-        if(!homeResultList.get(position).getDiscount().isEmpty()) {
-            if (holder.tvDiscount != null) {
-                holder.tvDiscount.setText(homeResultList.get(position).getDiscount() + "% *");
-            }
+
+        if(homeResultList.get(position).getDiscount()==null || homeResultList.get(position).getDiscount().isEmpty()) {
+            homeResultList.get(position).setDiscount("0");
+        }
+        if(homeResultList.get(position).getComboDiscount()==null || homeResultList.get(position).getComboDiscount().isEmpty()) {
+            homeResultList.get(position).setComboDiscount("0");
+        }
+        if(homeResultList.get(position).getOfferDiscount()==null || homeResultList.get(position).getOfferDiscount().isEmpty()) {
+            homeResultList.get(position).setOfferDiscount("0");
+        }
+
+        if(!homeResultList.get(position).getDiscount().equalsIgnoreCase("0") || !homeResultList.get(position).getComboDiscount().equalsIgnoreCase("0")|| !homeResultList.get(position).getOfferDiscount().equalsIgnoreCase("0")) {
+
+                if(Integer.parseInt(homeResultList.get(position).getDiscount())>Integer.parseInt(homeResultList.get(position).getComboDiscount()) && Integer.parseInt(homeResultList.get(position).getDiscount())>Integer.parseInt(homeResultList.get(position).getOfferDiscount())) {
+                    holder.tvDiscount.setText(homeResultList.get(position).getDiscount() + "% *");
+                }else if(Integer.parseInt(homeResultList.get(position).getComboDiscount())>Integer.parseInt(homeResultList.get(position).getDiscount()) && Integer.parseInt(homeResultList.get(position).getComboDiscount())>Integer.parseInt(homeResultList.get(position).getOfferDiscount()))
+                {
+                    holder.tvDiscount.setText(homeResultList.get(position).getComboDiscount() + "% *");
+                }else {
+                    holder.tvDiscount.setText(homeResultList.get(position).getOfferDiscount() + "% *");
+                }
+
         }else {
             if(holder.linBadge!=null) {
                 holder.linBadge.setVisibility(View.GONE);
             }
         }
-        }else
-        {
-            if(holder.linBadge!=null) {
-                holder.linBadge.setVisibility(View.GONE);
-            }
-            homeResultList.get(position).setDiscount("");
-        }
+
         if(homeResultList.get(position).getBranImg()!=null) {
-            Glide.with(nActivity).load(homeResultList.get(position).getBranImg()).error(R.drawable.img_profile).into(holder.rivSaloonImage);
+            Glide.with(nActivity).load(homeResultList.get(position).getBranImg()).placeholder(R.drawable.placeholder_gray_corner).error(R.drawable.placeholder_gray_corner).into(holder.rivSaloonImage);
         }
         getResizedDrawable(nActivity, R.drawable.ic_location_icon, holder.tvSalonLocation, null, null, R.dimen._11sdp);
         getResizedDrawable(nActivity, R.drawable.ic_location_distance_icon, holder.tvSalonDistance, null, null, R.dimen._11sdp);

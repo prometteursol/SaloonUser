@@ -3,6 +3,8 @@ package com.prometteur.saloonuser.Activities;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.prometteur.saloonuser.Adapter.FixedAppointmentsAdapter;
 import com.prometteur.saloonuser.Model.AppointmentBean;
 import com.prometteur.saloonuser.R;
 import com.prometteur.saloonuser.Utils.LinePagerIndicatorDecoration;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.databinding.FragmentAppointmentsBinding;
 import com.prometteur.saloonuser.retrofit.ApiInterface;
 import com.prometteur.saloonuser.retrofit.RetrofitInstance;
@@ -65,7 +68,7 @@ j
             }
         });
         appointmentsBinding.ivBackArrowimg.setVisibility(View.VISIBLE);
-        appointmentsBinding.vpAppointments.setVisibility(View.GONE);
+        appointmentsBinding.pullToRefresh.setVisibility(View.GONE);
         appointmentsBinding.layoutDot.setVisibility(View.GONE);
         appointmentsBinding.linTab.setPadding(0,20,0,0);
         appointmentsBinding.tvTitle.setText("Appointment History");
@@ -105,21 +108,27 @@ j
     }
 
 
-
-   /* @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        return view;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
     }
-*/
-  /*  @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-       // appointmentsBinding.vpAppointmentsList.setOffscreenPageLimit(2);
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
 
-    }*/
+        }
+    }
 
 
 }

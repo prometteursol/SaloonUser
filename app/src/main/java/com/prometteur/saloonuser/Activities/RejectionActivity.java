@@ -2,6 +2,8 @@ package com.prometteur.saloonuser.Activities;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +28,7 @@ import com.prometteur.saloonuser.Model.CancelAppBean;
 import com.prometteur.saloonuser.Model.CheckPenaltyBean;
 import com.prometteur.saloonuser.Model.HistoryDataModel;
 import com.prometteur.saloonuser.R;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.Utils.RadioButtonCustomFont;
 import com.prometteur.saloonuser.retrofit.ApiInterface;
 import com.prometteur.saloonuser.retrofit.RetrofitInstance;
@@ -191,20 +194,26 @@ if(aptStatus.equalsIgnoreCase("3")) {
 
                     @Override
                     public void onNext(CancelAppBean loginBeanObj) {
-                        progressDialog.dismiss();
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
                         appointmentBean = loginBeanObj;
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        progressDialog.dismiss();
-                        showFailToast(RejectionActivity.this, getResources().getString(R.string.went_wrong));
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                       // showFailToast(RejectionActivity.this, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
                     public void onComplete() {
                         // Updates UI with data
-                        progressDialog.dismiss();
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
 
                         if (appointmentBean.getStatus() == 1) {
 showSuccessToast(RejectionActivity.this,"Appointment Cancelled");
@@ -218,7 +227,27 @@ finish();
                 });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
 
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
+    }
 
 
 }

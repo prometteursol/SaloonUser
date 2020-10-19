@@ -65,6 +65,8 @@ public class AppointmentStatusAdapter extends RecyclerView.Adapter<AppointmentSt
                 holder.tvAppointmentStatus.setText("Cancelled");
             }else if(appointmentData.getAptStatus().equalsIgnoreCase("8")) {
                 holder.tvAppointmentStatus.setText("Unattended");
+            }else if(appointmentData.getAptStatus().equalsIgnoreCase("9")) {
+                holder.tvAppointmentStatus.setText("No Show");
             }
            // holder.tvAppointmentStatus.setText(R.string.cancelled);
             holder.tvPaidAmount.setText("NA");
@@ -94,7 +96,7 @@ public class AppointmentStatusAdapter extends RecyclerView.Adapter<AppointmentSt
             holder.tvPaymentType.setText("Salon");
         }
         if(appointmentData.getBranImg()!=null) {
-            Glide.with(nActivity).load(appointmentData.getBranImg()).into(holder.rivSaloonImage);
+            Glide.with(nActivity).load(appointmentData.getBranImg()).placeholder(R.drawable.placeholder_gray_corner).error(R.drawable.placeholder_gray_corner).into(holder.rivSaloonImage);
         }
 
     }

@@ -3,6 +3,8 @@ package com.prometteur.saloonuser.Activities;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -19,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.prometteur.saloonuser.Model.LoginBean;
 import com.prometteur.saloonuser.R;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.databinding.ActivityChangePasswordBinding;
 import com.prometteur.saloonuser.databinding.ActivityForgotPasswordBinding;
 import com.prometteur.saloonuser.databinding.DialogAccountCreatedBinding;
@@ -52,7 +55,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         View view = activityChangePasswordBinding.getRoot();
         setContentView(view);
         int currentapiVersion = Build.VERSION.SDK_INT;
-        if(Build.VERSION_CODES.P==currentapiVersion)
+        if(currentapiVersion>=Build.VERSION_CODES.P)
         {
             getWindow().setFlags(
                     WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
@@ -133,7 +136,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ChangePasswordActivity.this, getResources().getString(R.string.went_wrong));
+                      //  showFailToast(ChangePasswordActivity.this, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -161,6 +164,28 @@ public class ChangePasswordActivity extends AppCompatActivity {
         {
             startActivity(new Intent(ChangePasswordActivity.this,ActivityLogin.class));
             finish();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //checkInternet();
+    }
+
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
         }
     }
 }

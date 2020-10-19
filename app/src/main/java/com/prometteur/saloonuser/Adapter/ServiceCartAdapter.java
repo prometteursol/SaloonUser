@@ -102,6 +102,13 @@ public class ServiceCartAdapter extends RecyclerView.Adapter<ServiceCartAdapter.
 
 if(mDataList.get(position).getSrvcDiscount()!=null && !mDataList.get(position).getSrvcDiscount().isEmpty()) {
     holder.tvTime.setText(mDataList.get(position).getSrvcDiscount() + "% OFF");
+    if (mDataList.get(position).getOfferName() != null && !mDataList.get(position).getOfferName().isEmpty()) {
+        holder.tvOfferName.setText(""+mDataList.get(position).getOfferName());
+        holder.tvOfferName.setVisibility(View.VISIBLE);
+    }else
+    {
+        holder.tvOfferName.setVisibility(View.GONE);
+    }
     if (mDataList.get(position).getSrvcDiscountPrice() == null || mDataList.get(position).getSrvcDiscountPrice().isEmpty()) {
         holder.tvOfferPrice.setText("₹ " + new DecimalFormat("##.##").format(Double.parseDouble(mDataList.get(position).getSrvcPrice())));
         holder.tvMainPrice.setVisibility(View.GONE);
@@ -290,7 +297,7 @@ if(!isOperator)
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                      //  showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -299,7 +306,10 @@ if(!isOperator)
                         progressDialog.dismiss();
                         try {
                             if (cartDetailBean.getStatus() == 1) {
-
+                                Preferences.setPreferenceValue(nActivity, "couponId", "0");
+                                Preferences.setPreferenceValue(nActivity, "couponCode", "");
+                                Preferences.setPreferenceValue(nActivity, "couponDesc", "");
+                                Preferences.setPreferenceValue(nActivity, "couponOffPrice", "0");
                                 if(globalCartCount==1){
                                     dateTimeOneTime=false;
                                     Preferences.setPreferenceValue(nActivity, "dateTimeOneTime","false");
@@ -339,6 +349,7 @@ if(!isOperator)
         TextViewCustomFont tvDesc;
         TextViewCustomFont tvAddRemoveOperator;
         TextViewCustomFont tvAddedOperatorName;
+        TextViewCustomFont tvOfferName;
         TextViewCustomFont tvOfferPrice;
         TextViewCustomFont tvMainPrice;
         TextViewCustomFont tvTime;
@@ -353,6 +364,7 @@ if(!isOperator)
             tvAddedOperatorName = itemView.findViewById(R.id.tvAddedOperatorName);
             tvOfferPrice = itemView.findViewById(R.id.tvOfferPrice);
             tvMainPrice = itemView.findViewById(R.id.tvMainPrice);
+            tvOfferName = itemView.findViewById(R.id.tvOfferName);
             tvTime = itemView.findViewById(R.id.tvTime);
             ivRemoveCombo = itemView.findViewById(R.id.ivRemoveCombo);
         }

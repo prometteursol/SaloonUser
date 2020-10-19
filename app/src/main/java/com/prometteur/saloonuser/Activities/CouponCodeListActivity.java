@@ -2,6 +2,8 @@ package com.prometteur.saloonuser.Activities;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 
@@ -12,11 +14,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.prometteur.saloonuser.Adapter.CouponCodeListAdapter;
 import com.prometteur.saloonuser.Model.CouponBean;
 import com.prometteur.saloonuser.R;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.databinding.ActivityCouponListBinding;
 import com.prometteur.saloonuser.listener.OnItemClickListener;
 import com.prometteur.saloonuser.retrofit.ApiInterface;
 import com.prometteur.saloonuser.retrofit.RetrofitInstance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observer;
@@ -27,6 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 import static com.prometteur.saloonuser.Constants.ConstantVariables.USERIDVAL;
 import static com.prometteur.saloonuser.Utils.Utils.isNetworkAvailable;
 import static com.prometteur.saloonuser.Utils.Utils.logout;
+import static com.prometteur.saloonuser.Utils.Utils.setEmptyMsg;
 import static com.prometteur.saloonuser.Utils.Utils.showFailToast;
 import static com.prometteur.saloonuser.Utils.Utils.showNoInternetDialog;
 import static com.prometteur.saloonuser.Utils.Utils.showProgress;
@@ -39,7 +44,7 @@ public class CouponCodeListActivity extends AppCompatActivity implements View.On
     ActivityCouponListBinding salonServicesBinding;
     AppCompatActivity nActivity;
     CouponBean couponBean;
-    List<CouponBean.Result> mDataList;
+    List<CouponBean.Result> mDataList=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +112,7 @@ public class CouponCodeListActivity extends AppCompatActivity implements View.On
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -124,7 +129,7 @@ public class CouponCodeListActivity extends AppCompatActivity implements View.On
                             showFailToast(nActivity, "" + couponBean.getMsg());
                               logout(nActivity);
                         }
-                        //setEmptyMsg(mDataList, comboPageBinding.recycleCombolist, ivNoData);
+                        setEmptyMsg(mDataList,  salonServicesBinding.recycleChatting, salonServicesBinding.layNoData.ivNoData);
                     }
                 });
     }
@@ -152,7 +157,7 @@ CouponBean couponBean1;
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                      //  showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -200,5 +205,25 @@ CouponBean couponBean1;
         finish();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
 
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
+    }
 }

@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -14,6 +13,7 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <application
+        android:name=".Utils.SalonApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -31,7 +31,9 @@
         <activity android:name="com.prometteur.saloonuser.Activities.ActivitySalonProfile" />
         <activity android:name="com.prometteur.saloonuser.Activities.ActivityCustomerSupport" />
         <activity android:name="com.prometteur.saloonuser.Activities.ActivityAccountsSettings" />
-        <activity android:name="com.prometteur.saloonuser.Activities.ActivityAppointmentDetails" />
+        <activity android:name="com.prometteur.saloonuser.Activities.ActivityAppointmentDetails"
+            android:launchMode="singleTask"
+            android:clearTaskOnLaunch="true" />
         <activity android:name="com.prometteur.saloonuser.Activities.ActivitySearchSalons" />
         <activity android:name="com.prometteur.saloonuser.Activities.ActivitySearchLocation" />
         <activity android:name="com.prometteur.saloonuser.Activities.ActivityHomepage">
@@ -74,6 +76,7 @@
         <activity android:name=".Activities.PointBalanceActivity" />
         <activity android:name=".Activities.ImageEnlargeActivity"
             android:launchMode="singleTask"/>
+        <activity android:name=".Activities.ActivityAboutUs" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -97,7 +100,8 @@
             </intent-filter>
         </service>
 
-
+        <service android:name=".services.ClosingService"
+            android:stopWithTask="false"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

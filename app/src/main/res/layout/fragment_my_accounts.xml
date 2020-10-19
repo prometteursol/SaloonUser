@@ -1,23 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content">
+<com.google.android.material.appbar.AppBarLayout
+    android:id="@+id/appBarLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tbAppointment"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_12sdp">
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvHiTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/hi"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@+id/civUserProfile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvUpdateProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit Profile >"
+                android:textColor="@color/white"
+                android:textSize="13dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvHiTitle" />
+
+            <com.github.siyamed.shapeimageview.CircularImageView
+                android:id="@+id/civUserProfile"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:src="@drawable/placeholder_white_circle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/tvUpdateProfile"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.666" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+</com.google.android.material.appbar.AppBarLayout>
+<androidx.core.widget.NestedScrollView
+    android:layout_width="match_parent"
     android:background="@color/AppointmentsBgGrey"
+    android:layout_height="match_parent"
+    android:layout_below="@+id/appBarLayout">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
     tools:context=".Fragments.FragmentMyAccounts">
 
 
-    <View
-        android:id="@+id/viewbg21"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="@color/grey"
-        app:layout_constraintBottom_toBottomOf="@+id/tvAbout"
-        app:layout_constraintEnd_toStartOf="@+id/tvRateUs"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/tvAbout"
-        app:layout_constraintTop_toTopOf="@+id/tvAbout" />
+
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -188,7 +246,7 @@
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_45sdp"
             android:padding="@dimen/_5sdp"
-            android:text="@string/help"
+            android:text="FAQ"
             android:textColor="@color/black"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -212,9 +270,150 @@
             app:layout_constraintTop_toTopOf="@+id/ivCustomerSupport" />
 
 
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/relTermsAndCondition"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        android:background="@color/white"
+        >
 
+        <View
+            android:id="@+id/viewbg15"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/grey"
+            android:layout_marginBottom="@dimen/_5sdp"
+   />
+        <ImageView
+            android:id="@+id/ivTermAndIcon"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:padding="2dp"
+            android:src="@drawable/ic_terms"
+            android:layout_below="@+id/viewbg15"
+            android:layout_centerVertical="true"/>
 
+        <com.prometteur.saloonuser.Utils.TextViewCustomFont
+            android:id="@+id/tvTermAndCondi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_45sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:padding="@dimen/_5sdp"
+            android:text="Terms &amp; Conditions"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_toRightOf="@+id/ivTermAndIcon"
+            android:layout_centerVertical="true"
+            />
+        <ImageView
+            android:id="@+id/ivTermAndCondition"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:src="@drawable/ic_grey_goright"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+          />
+    </RelativeLayout>
+<RelativeLayout
+        android:id="@+id/relPrivacyPolicy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relTermsAndCondition"
+        android:background="@color/white"
+
+        >
+    <View
+        android:id="@+id/viewbg16"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:background="@color/grey"
+        />
+        <ImageView
+            android:id="@+id/ivPrivacyPolicyIcon"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:padding="2dp"
+            android:src="@drawable/ic_privacy"
+            android:layout_centerVertical="true"
+            android:layout_below="@+id/viewbg16"/>
+
+        <com.prometteur.saloonuser.Utils.TextViewCustomFont
+            android:id="@+id/tvPrivacyPolicy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_45sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_marginTop="5dp"
+            android:padding="@dimen/_5sdp"
+            android:text="Privacy Policy"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_toRightOf="@+id/ivPrivacyPolicyIcon"
+            android:layout_centerVertical="true"
+            />
+        <ImageView
+            android:id="@+id/ivPrivacyPolicy"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:src="@drawable/ic_grey_goright"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+          />
+    </RelativeLayout>
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvAbout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:paddingEnd="@dimen/_40sdp"
+        android:text="About Us"
+        android:textColor="@color/grey"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/viewbg21"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relPrivacyPolicy" />
+    <View
+        android:id="@+id/viewbg21"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@color/grey"
+        app:layout_constraintBottom_toBottomOf="@+id/tvAbout"
+        app:layout_constraintEnd_toStartOf="@+id/tvRateUs"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvAbout"
+        app:layout_constraintTop_toTopOf="@+id/tvAbout" />
+    <com.prometteur.saloonuser.Utils.TextViewCustomFont
+        android:id="@+id/tvRateUs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:paddingStart="@dimen/_40sdp"
+        android:text="@string/rate_us"
+        android:textColor="@color/grey"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/viewbg21"
+        app:layout_constraintTop_toBottomOf="@+id/relPrivacyPolicy" />
     <RelativeLayout
         android:id="@+id/Conlay0"
         android:layout_width="0dp"
@@ -448,96 +647,11 @@
     </RelativeLayout>
 
 
-    <com.prometteur.saloonuser.Utils.TextViewCustomFont
-        android:id="@+id/tvAbout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:paddingEnd="@dimen/_40sdp"
-        android:text="@string/about"
-        android:textColor="@color/grey"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toStartOf="@+id/viewbg21"
-
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
-
-    <com.prometteur.saloonuser.Utils.TextViewCustomFont
-        android:id="@+id/tvRateUs"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:paddingStart="@dimen/_40sdp"
-        android:text="@string/rate_us"
-        android:textColor="@color/grey"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/viewbg21"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/tbAppointment"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_12sdp">
-
-                <com.prometteur.saloonuser.Utils.TextViewCustomFont
-                    android:id="@+id/tvHiTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/hi"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    app:layout_constraintEnd_toStartOf="@+id/civUserProfile"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
 
-                <com.prometteur.saloonuser.Utils.TextViewCustomFont
-                    android:id="@+id/tvUpdateProfile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Edit Profile >"
-                    android:textColor="@color/white"
-                    android:textSize="13dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvHiTitle" />
 
-                <com.github.siyamed.shapeimageview.CircularImageView
-                    android:id="@+id/civUserProfile"
-                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_30sdp"
-                    android:src="@drawable/img_login"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@+id/tvUpdateProfile"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.666" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
+</androidx.core.widget.NestedScrollView>
+</RelativeLayout>

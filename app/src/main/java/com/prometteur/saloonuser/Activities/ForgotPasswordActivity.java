@@ -144,7 +144,7 @@ String inputType="";
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ForgotPasswordActivity.this,  getResources().getString(R.string.went_wrong));
+                        //showFailToast(ForgotPasswordActivity.this,  getResources().getString(R.string.went_wrong));
                     }
 
                     @Override

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -62,7 +63,12 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         activityLoginBinding = ActivityLoginBinding.inflate(getLayoutInflater());
         View view = activityLoginBinding.getRoot();
         setContentView(view);
-
+        int currentapiVersion = Build.VERSION.SDK_INT;
+        if (currentapiVersion>= Build.VERSION_CODES.P) {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+        }
         activityLoginBinding.btnLogin.setOnClickListener(this);
         activityLoginBinding.tvForgotPassword.setOnClickListener(this);
         activityLoginBinding.tvExpressInterest.setOnClickListener(this);
@@ -194,7 +200,7 @@ String appId="null",notiId="null";
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ActivityLogin.this, getResources().getString(R.string.went_wrong));
+                       // showFailToast(ActivityLogin.this, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override

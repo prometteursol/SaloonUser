@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -14,6 +15,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -21,16 +23,25 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
@@ -49,6 +60,7 @@ import com.prometteur.saloonuser.Utils.Preferences;
 import com.prometteur.saloonuser.databinding.ActivityHomepageBinding;
 import com.prometteur.saloonuser.retrofit.ApiInterface;
 import com.prometteur.saloonuser.retrofit.RetrofitInstance;
+import com.prometteur.saloonuser.services.ClosingService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,13 +95,11 @@ import static com.prometteur.saloonuser.Constants.ConstantVariables.USERSESSIONV
 import static com.prometteur.saloonuser.Constants.ConstantVariables.apiKey;
 import static com.prometteur.saloonuser.Fragments.FragmentListSalonView.lat;
 import static com.prometteur.saloonuser.Fragments.FragmentListSalonView.lon;
-import static com.prometteur.saloonuser.Utils.Utils.dialog;
 import static com.prometteur.saloonuser.Utils.Utils.enableLocation;
 import static com.prometteur.saloonuser.Utils.Utils.isNetworkAvailable;
 import static com.prometteur.saloonuser.Utils.Utils.logout;
 import static com.prometteur.saloonuser.Utils.Utils.showFailToast;
 import static com.prometteur.saloonuser.Utils.Utils.showNoInternetDialog;
-import static com.prometteur.saloonuser.Utils.Utils.showNoInternetDialogReceiver;
 import static com.prometteur.saloonuser.Utils.Utils.showProgress;
 import static com.prometteur.saloonuser.Utils.Utils.showSuccessToast;
 
@@ -110,11 +120,15 @@ public class ActivityHomepage extends AppCompatActivity implements View.OnClickL
     protected LocationListener locationListener;
     public static boolean loadHomeFirstTime = false;
     LocationProviderChangedReceiver gpsReceiver;
-    NetworkChangeReceiver networkChangeReceiver;
     public static String category="",brands="",rating="",discount="",sortBy="",gender="",lowToHigh="",highToLow="";
     public static List<String> brandsArr=new ArrayList<>();
     public static List<String> selectedCats=new ArrayList<>();
+    public static List<String> selectedCatsText=new ArrayList<>();
     public static String strHistory="0";
+    public NetworkChangeReceiver receiver;
+    public static boolean isFilter=false;
+    public static AlertDialog.Builder alertDialog;
+    public static int comboSkip=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,9 +137,15 @@ public class ActivityHomepage extends AppCompatActivity implements View.OnClickL
         setContentView(view);
         nContext = this;
         nActivity = this;
+         alertDialog= new AlertDialog.Builder(nActivity);
         gpsReceiver = new LocationProviderChangedReceiver();
-        networkChangeReceiver = new NetworkChangeReceiver();
-
+        Intent serviceIntent = new Intent(this, ClosingService.class);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            startService(serviceIntent);
+        }else
+        {
+            startForegroundService(serviceIntent);
+        }
         USERIDVAL = Preferences.getPreferenceValue(ActivityHomepage.this, USERID);
         USERSESSIONVAL = Preferences.getPreferenceValue(ActivityHomepage.this, USERSESSION);
         USERFNAME = Preferences.getPreferenceValue(ActivityHomepage.this, USERFNAMEKEY);
@@ -149,40 +169,64 @@ public class ActivityHomepage extends AppCompatActivity implements View.OnClickL
        {
            selectedCats=new ArrayList<>();
            selectedCats.addAll(Arrays.asList(category.split(",")));
+           isFilter=true;
        }else
        {
            category="";
            selectedCats=new ArrayList<>();
+           selectedCatsText=new ArrayList<>();
        }
        if(!brands.isEmpty() && !brands.equalsIgnoreCase("NA"))
        {
            brandsArr=new ArrayList<>();
            brandsArr.addAll(Arrays.asList(brands.split(",")));
+           isFilter=true;
        }else
        {
            brands="";
            brandsArr=new ArrayList<>();
        }
 
-       if(gender.equalsIgnoreCase("NA"))
+       if(gender.equalsIgnoreCase("NA")|| gender.equalsIgnoreCase(""))
        {
            gender="";
-       }if(rating.equalsIgnoreCase("NA") || rating.equalsIgnoreCase("0.0"))
+       }else
+       {
+           isFilter=true;
+       }
+
+       if(rating.equalsIgnoreCase("NA") || rating.equalsIgnoreCase("0.0") || rating.isEmpty())
        {
            rating="";
-       }if(discount.equalsIgnoreCase("NA"))
+       }else
+       {
+           isFilter=true;
+       }if(discount.equalsIgnoreCase("NA") || discount.equalsIgnoreCase(""))
        {
            discount="";
-       }if(sortBy.equalsIgnoreCase("NA"))
+       }else
+        {
+            isFilter=true;
+        }
+       if(sortBy.equalsIgnoreCase("NA") || sortBy.equalsIgnoreCase(""))
        {
            sortBy="";
-       }if(lowToHigh.equalsIgnoreCase("NA"))
+       }else
+       {
+           isFilter=true;
+       }if(lowToHigh.equalsIgnoreCase("NA") || lowToHigh.equalsIgnoreCase(""))
        {
            lowToHigh="";
-       }if(highToLow.equalsIgnoreCase("NA"))
+       }else
+        {
+            isFilter=true;
+        }if(highToLow.equalsIgnoreCase("NA") || highToLow.equalsIgnoreCase(""))
        {
            highToLow="";
-       }
+       }else
+        {
+            isFilter=true;
+        }
        String appId=getIntent().getStringExtra("appId");
        if(appId==null)
        {
@@ -218,6 +262,7 @@ public class ActivityHomepage extends AppCompatActivity implements View.OnClickL
 
         homeBinding.fabFloatingButton.setImageDrawable
                 (nActivity.getResources().getDrawable(R.drawable.ic_show_map_icon));
+     //   menuPos = 0;
         loadFragment(new FragmentListSalonView(ActivityHomepage.this));
         homeBinding.fabFloatingButton.setOnClickListener(this);
         /*homeBinding.ivSearchimg.setOnClickListener(this);
@@ -235,7 +280,7 @@ public class ActivityHomepage extends AppCompatActivity implements View.OnClickL
                 switch (menuItem.getItemId()) {
 
                     case R.id.navigation_home:
-                        enableLocation(ActivityHomepage.this);
+                        displayLocationSettingsRequest(nActivity);
                         loadHomeFirstTime = false;
                        // getLocationPermission();
                         homeBinding.fabFloatingButton.setVisibility(View.VISIBLE);
@@ -268,38 +313,33 @@ public class ActivityHomepage extends AppCompatActivity implements View.OnClickL
 
 // Create a new Places client instance
         PlacesClient placesClient = Places.createClient(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+        /*if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.i("call home api","onCreate");
             getLocationPermission();
             return;
         }
+*/
 
-
-        enableLocation(ActivityHomepage.this);
-        //getLocationPermission();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(networkChangeReceiver,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        displayLocationSettingsRequest(nActivity);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.i("call home api","resume");
             getLocationPermission();
             return;
         }
+        checkInternet();
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, ActivityHomepage.this);
-        showSuccessToast(nActivity,"Request Location Update");
+        //showSuccessToast(nActivity,"Request Location Update");
         //registerReceiver(gpsReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
         getUpdateLocation("");
         if(loadHomeFirstTime) {
+            Log.i("call home api","resumeHome");
             getHomeData();
         }
 
@@ -312,8 +352,8 @@ public class ActivityHomepage extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.i("ActivityHome","Destroy");
       //  unregisterReceiver(gpsReceiver);
-        unregisterReceiver(networkChangeReceiver);
     }
 
     private static boolean loadFragment(Fragment fragment) {
@@ -334,6 +374,20 @@ public class ActivityHomepage extends AppCompatActivity implements View.OnClickL
         return false;
     }
 
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+                unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -355,6 +409,7 @@ public class ActivityHomepage extends AppCompatActivity implements View.OnClickL
         }
     }
 public static String branchId="0";
+public static int homeCount=0;
     final static long[] mLastClickTime = {0};
     private static void getHomeData() {
         if (SystemClock.elapsedRealtime() - mLastClickTime[0] < 1000) {
@@ -363,14 +418,20 @@ public static String branchId="0";
         mLastClickTime[0] = SystemClock.elapsedRealtime();
         ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
 
-        final Dialog progressDialog = showProgress(nActivity, 0);
-        if(menuPos==0) {
-            if(!nActivity.isFinishing())
-            {
-                progressDialog.show();
-            }
-
+   final Dialog progressDialog = showProgress(nActivity, 0);
+    if (menuPos == 0) {
+        if (!nActivity.isFinishing()) {
+            try {
+                if(!progressDialog.isShowing()) {
+                    progressDialog.show();
+                }
+            }catch (Exception e)
+            {}
         }
+
+
+    }
+
         if(strLat.equalsIgnoreCase("0") || strLat.equalsIgnoreCase("NA")) {
             strLat = Preferences.getPreferenceValue(nActivity, "lat");
             strLong = Preferences.getPreferenceValue(nActivity, "lon");
@@ -417,7 +478,19 @@ public static String branchId="0";
                         if(progressDialog!=null && progressDialog.isShowing()) {
                             progressDialog.dismiss();
                         }
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        if(e.getMessage().contains("502"))
+                        {
+                            if(homeCount<2) {
+                                homeCount++;
+                                getDeviceLocation();
+                            }else{
+                               // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                            }
+                        }else
+                        {
+                           // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        }
+
                     }
 
                     @Override
@@ -429,12 +502,22 @@ public static String branchId="0";
                         if (homeBean.getStatus() == 1) {
                             // Preferences.setPreferenceValue(ActivityHomepage.this, USERID,          result.getUserId());
                             if(menuPos==0) {
+
                                 if(nActivity.getIntent().getStringExtra("branchId")!=null && !nActivity.getIntent().getStringExtra("branchId").isEmpty()){
                                     branchId=nActivity.getIntent().getStringExtra("branchId");
                                     mapLoaded = true;
+                                    homeBinding.fabFloatingButton.setImageDrawable(nActivity.getResources().getDrawable(R.drawable.ic_show_salon_list_icon));
                                     loadFragment(new FragmentMapListSalonView(nActivity));
-                                }else {
+                                }else if(mapLoaded)
+                                {
+                                    branchId=nActivity.getIntent().getStringExtra("branchId");
+                                    mapLoaded = true;
+                                    homeBinding.fabFloatingButton.setImageDrawable(nActivity.getResources().getDrawable(R.drawable.ic_show_salon_list_icon));
+                                    loadFragment(new FragmentMapListSalonView(nActivity));
+                                }else{
                                     branchId="";
+                                    mapLoaded = false;
+                                    homeBinding.fabFloatingButton.setImageDrawable(nActivity.getResources().getDrawable(R.drawable.ic_show_map_icon));
                                     loadFragment(new FragmentListSalonView(nActivity));
                                 }
                             }else if(menuPos==2)
@@ -497,8 +580,16 @@ if(nActivity!=null) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(loc_request_code==requestCode)
         {
-            Loc_permissiongranted = true;
-            getDeviceLocation();
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // permission granted
+                Loc_permissiongranted = true;
+            }else{
+                //show some warning
+            }
+
+           // enableLocation(nActivity);
+            //getDeviceLocation();
         }
     }
 
@@ -520,14 +611,14 @@ if(nActivity!=null) {
                                     Log.d(TAG, "onSuccess: " + location.getLatitude() + "    " + location.getLongitude());
                                     strLat=""+location.getLatitude();
                                     strLong=""+location.getLongitude();
-                                    if(Preferences.getPreferenceValue(nActivity,"lat").equalsIgnoreCase("NA") || Preferences.getPreferenceValue(nActivity,"lat").isEmpty()) {
+                                   // if(Preferences.getPreferenceValue(nActivity,"lat").equalsIgnoreCase("NA") || Preferences.getPreferenceValue(nActivity,"lat").isEmpty()) {
                                         Preferences.setPreferenceValue(nActivity, "lat", strLat);
                                         Preferences.setPreferenceValue(nActivity, "lon", strLong);
-                                    }else
+                                   /* }else
                                     {
                                         strLat=Preferences.getPreferenceValue(nActivity,"lat");
                                         strLong=Preferences.getPreferenceValue(nActivity,"lon");
-                                    }
+                                    }*/
                                     if (isNetworkAvailable(nActivity)) {
                                         getUpdateLocation("");
                                         if(!loadHomeFirstTime) {
@@ -541,8 +632,8 @@ if(nActivity!=null) {
                                     }
                                 } else {
                                     Log.d(TAG, "onfailure: unable to find current device location");
-                                    strLat=Preferences.getPreferenceValue(nActivity,"lat");
-                                    strLong=Preferences.getPreferenceValue(nActivity,"lon");
+                                    /*strLat=Preferences.getPreferenceValue(nActivity,"lat");
+                                    strLong=Preferences.getPreferenceValue(nActivity,"lon");*/
                                     if(strLat.equalsIgnoreCase("NA"))
                                     {
                                         strLat="0";
@@ -611,7 +702,7 @@ if(nActivity!=null) {
 
 //        getUpdateLocation("");
        // }
-        showSuccessToast(nActivity,"onLocation :"+location.getLatitude()+","+location.getLongitude());
+       // showSuccessToast(nActivity,"onLocation :"+location.getLatitude()+","+location.getLongitude());
        // getHomeData();
     }
 
@@ -685,7 +776,7 @@ super();
 
                 //Start your Activity if location was enabled:
                 if (isGpsEnabled || isNetworkEnabled) {
-
+                    Log.i("call home api","GPS Enabled");
                     getLocationPermission();
                 }else
                 {
@@ -693,7 +784,7 @@ super();
                         return;
                     }
                     mLastClickTime1[0] = SystemClock.elapsedRealtime();
-                    enableLocation(nActivity);
+                    displayLocationSettingsRequest(nActivity);
                 }
             }
         }
@@ -702,6 +793,7 @@ super();
 
     static UpdateLocationBean updateLocationBean;
     static String addressUpdatedLoc="";
+    public static int updateLocCount=0;
     private static void getUpdateLocation(final String address) {
         getPincode();
         ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
@@ -725,7 +817,18 @@ super();
                     @Override
                     public void onError(Throwable e) {
                         //progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        if(e.getMessage().contains("502"))
+                        {
+                            if(updateLocCount<2) {
+                                updateLocCount++;
+                                getUpdateLocation(address);
+                            }else{
+                               // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                            }
+                        }else
+                        {
+                           // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        }
                     }
 
                     @Override
@@ -749,4 +852,53 @@ super();
 
 
     }
+
+static int REQUEST_CHECK_SETTINGS=10101;
+    private static void displayLocationSettingsRequest(Context context) {
+        try {
+            GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
+                    .addApi(LocationServices.API).build();
+            googleApiClient.connect();
+
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(10000);
+            locationRequest.setFastestInterval(10000 / 2);
+
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+            builder.setAlwaysShow(true);
+
+            PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @Override
+                public void onResult(LocationSettingsResult result) {
+                    final Status status = result.getStatus();
+                    switch (status.getStatusCode()) {
+                        case LocationSettingsStatusCodes.SUCCESS:
+                            Log.i(TAG, "All location settings are satisfied.");
+                            getLocationPermission();
+                            break;
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
+
+                            try {
+                                // Show the dialog by calling startResolutionForResult(), and check the result
+                                // in onActivityResult().
+                                status.startResolutionForResult(nActivity, REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException e) {
+                                Log.i(TAG, "PendingIntent unable to execute request.");
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
+                            break;
+                    }
+                }
+            });
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -70,6 +70,7 @@ import com.prometteur.saloonuser.Model.SliderItem;
 import com.prometteur.saloonuser.Model.UpdateLocationBean;
 import com.prometteur.saloonuser.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.Utils.Preferences;
 import com.prometteur.saloonuser.databinding.FragmentListsalonViewBinding;
 import com.prometteur.saloonuser.listener.OnItemClickListener;
@@ -104,6 +105,7 @@ import static com.prometteur.saloonuser.Activities.ActivityHomepage.gender;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.globalCartCount;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.highToLow;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.homeBean;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.isFilter;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.loadHomeFirstTime;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.lowToHigh;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.menuPos;
@@ -152,6 +154,8 @@ public class FragmentListSalonView extends Fragment implements View.OnClickListe
 
     public static BottomSheetDialogFragment filterBottomSheet;
 
+
+
     public FragmentListSalonView() {
         // Required empty public constructor
     }
@@ -178,50 +182,7 @@ public class FragmentListSalonView extends Fragment implements View.OnClickListe
         slider=view.findViewById(R.id.slider);*/
 
 
-        try {
 
-
-            if(homeBean!=null) {
-               // listSalonBinding.slider.setAdapter(new ViewPagerSliderAdapter(nActivity, false, homeBean.getAdvertisement()));
-                Timer timer = new Timer();
-                timer.scheduleAtFixedRate(new SliderTimer(), 3000, 2000);
-            //    setPageNuber(homeBean.getAdvertisement().size(),i);
-
-
-                SliderAdapterExample adapter = new SliderAdapterExample(nActivity);
-
-                for(int i=0;i<homeBean.getAdvertisement().size();i++)
-                {
-                    SliderItem sliderItem=new SliderItem();
-                    sliderItem.setImageUrl(homeBean.getAdvertisement().get(i).getAdvImg());
-                    sliderItem.setDescription(homeBean.getAdvertisement().get(i).getAdvUrl());
-                    adapter.addItem(sliderItem);
-                }
-                listSalonBinding.sliderView.setSliderAdapter(adapter);
-
-                listSalonBinding.sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
-                listSalonBinding.sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
-                listSalonBinding.sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_LEFT);
-                listSalonBinding.sliderView.setIndicatorSelectedColor(Color.TRANSPARENT);
-                listSalonBinding.sliderView.setIndicatorUnselectedColor(Color.TRANSPARENT);
-                listSalonBinding.sliderView.setIndicatorEnabled(false);
-                listSalonBinding.sliderView.setAutoCycle(true);
-                listSalonBinding.sliderView.setScrollTimeInSec(5); //set scroll delay in seconds :
-                listSalonBinding.sliderView.startAutoCycle();
-            }
-
-           /* listSalonBinding.swipeRefresh.setOnRefreshListener(
-                    new SwipeRefreshLayout.OnRefreshListener() {
-                        @Override
-                        public void onRefresh() {
-                            onResume();
-
-                        }
-                    }
-            );
-*/
-        }catch (Exception e)
-        {e.printStackTrace();}
 
         return view;
     }
@@ -229,7 +190,17 @@ public class FragmentListSalonView extends Fragment implements View.OnClickListe
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        listSalonBinding.pullToRefresh.setNestedScrollingEnabled(false);
+        listSalonBinding.pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to make your refresh action
+                getLocationPermission();
+                if(listSalonBinding.pullToRefresh.isRefreshing()) {
+                    listSalonBinding.pullToRefresh.setRefreshing(false);
+                }
+            }
+        });
         getLocationPermission();
         if (Loc_permissiongranted) {
 
@@ -280,11 +251,14 @@ public class FragmentListSalonView extends Fragment implements View.OnClickListe
         listSalonBinding.ivSearchimg.setOnClickListener(this);
         listSalonBinding.tvUserAddress.setOnClickListener(this);
         listSalonBinding.tvUserAddressTemp.setOnClickListener(this);
+        listSalonBinding.tvUserName.setOnClickListener(this);
         listSalonBinding.frameCart.setOnClickListener(this);
+
+
 
     }
 
-    private class SliderTimer extends TimerTask {
+    private static class SliderTimer extends TimerTask {
 
         @Override
         public void run() {
@@ -306,6 +280,20 @@ public class FragmentListSalonView extends Fragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
 
+        if(isFilter)
+        {
+            listSalonBinding.ivFilterimg.setImageResource(R.drawable.ic_filter_filled);
+        }else
+        {
+            listSalonBinding.ivFilterimg.setImageResource(R.drawable.ic_filter_icon);
+        }
+        SliderAdapterExample adapter = new SliderAdapterExample(nActivity);
+            SliderItem sliderItem=new SliderItem();
+            sliderItem.setImageUrl("");
+            sliderItem.setDescription("https://mooi.app/");
+            adapter.addItem(sliderItem);
+
+        listSalonBinding.sliderView.setSliderAdapter(adapter);
         if(homeBean!=null) {
 
              homeResultList = homeBean.getResult();
@@ -347,6 +335,50 @@ public class FragmentListSalonView extends Fragment implements View.OnClickListe
             }
             listSalonBinding.layNoData.ivNoData.setImageResource(R.drawable.img_list_is_empty);
             setEmptyMsg(homeResultList, listSalonBinding.recycleListsaloonView, listSalonBinding.layNoData.ivNoData);
+            try {
+
+
+                if(homeBean!=null) {
+                    // listSalonBinding.slider.setAdapter(new ViewPagerSliderAdapter(nActivity, false, homeBean.getAdvertisement()));
+                    Timer timer = new Timer();
+                    timer.scheduleAtFixedRate(new SliderTimer(), 3000, 2000);
+                    //    setPageNuber(homeBean.getAdvertisement().size(),i);
+
+
+                    SliderAdapterExample adapter1 = new SliderAdapterExample(nActivity);
+
+                    for(int i=0;i<homeBean.getAdvertisement().size();i++)
+                    {
+                        SliderItem sliderItem1=new SliderItem();
+                        sliderItem1.setImageUrl(homeBean.getAdvertisement().get(i).getAdvImg());
+                        sliderItem1.setDescription(homeBean.getAdvertisement().get(i).getAdvUrl());
+                        adapter1.addItem(sliderItem1);
+                    }
+                    listSalonBinding.sliderView.setSliderAdapter(adapter1);
+
+                    listSalonBinding.sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+                    listSalonBinding.sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+                    listSalonBinding.sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_LEFT);
+                    listSalonBinding.sliderView.setIndicatorSelectedColor(Color.TRANSPARENT);
+                    listSalonBinding.sliderView.setIndicatorUnselectedColor(Color.TRANSPARENT);
+                    listSalonBinding.sliderView.setIndicatorEnabled(false);
+                    listSalonBinding.sliderView.setAutoCycle(true);
+                    listSalonBinding.sliderView.setScrollTimeInSec(5); //set scroll delay in seconds :
+                    listSalonBinding.sliderView.startAutoCycle();
+                }
+
+           /* listSalonBinding.swipeRefresh.setOnRefreshListener(
+                    new SwipeRefreshLayout.OnRefreshListener() {
+                        @Override
+                        public void onRefresh() {
+                            onResume();
+
+                        }
+                    }
+            );
+*/
+            }catch (Exception e)
+            {e.printStackTrace();}
         }
 
     }
@@ -433,6 +465,7 @@ public class FragmentListSalonView extends Fragment implements View.OnClickListe
 
             case R.id.tvUserAddress:
             case R.id.tvUserAddressTemp:
+            case R.id.tvUserName:
                 getStartPlaceLocation();
                // startActivity(new Intent(nActivity, ActivitySearchLocation.class));
                 break;
@@ -559,6 +592,7 @@ Context context;
     }
 
     UpdateLocationBean updateLocationBean;
+    public static int updateLocCount1=0;
     private void getUpdateLocation(final String address) {
         loadHomeFirstTime=false;
         ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
@@ -582,7 +616,18 @@ Context context;
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, getResources().getString(R.string.went_wrong));
+                        if(e.getMessage().contains("502"))
+                        {
+                            if(updateLocCount1<2) {
+                                updateLocCount1++;
+                                getUpdateLocation(address);
+                            }else{
+                               // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                            }
+                        }else
+                        {
+                           // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        }
                     }
 
                     @Override
@@ -618,10 +663,18 @@ Context context;
     public static void getHomeData() {
 
         ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
-        final Dialog progressDialog = showProgress(nActivity, 0);
-        if(menuPos==0) {
-            progressDialog.show();
-        }
+        //final Dialog progressDialog = showProgress(nActivity, 0);
+
+         final Dialog progressDialog = showProgress(nActivity, 0);
+            if (menuPos == 0) {
+                if (!nActivity.isFinishing()) {
+                    if(!progressDialog.isShowing()) {
+                        progressDialog.show();
+                    }
+                }
+
+            }
+
         if(selectedCats.contains("0"))
         {
             category="";
@@ -651,20 +704,26 @@ Context context;
                     @Override
                     public void onNext(HomeBean loginBeanObj) {
                         homeBean = loginBeanObj;
-                        progressDialog.dismiss();
+                        if(progressDialog!=null) {
+                            progressDialog.dismiss();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        if(progressDialog!=null) {
+                            progressDialog.dismiss();
+                        }
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                        // listSalonBinding.conlayFilter.setVisibility(View.GONE);
                         setEmptyMsg(homeResultList, listSalonBinding.recycleListsaloonView, listSalonBinding.layNoData.ivNoData);
                     }
 
                     @Override
                     public void onComplete() {
-                        progressDialog.dismiss();
+                        if(progressDialog!=null) {
+                            progressDialog.dismiss();
+                        }
                         // Updates UI with data
                         if (homeBean.getStatus() == 1) {
                             //loadFragment(new FragmentListSalonView(nActivity));
@@ -688,15 +747,13 @@ Context context;
                             if(homeBean.getCart()!=0) {
                                 listSalonBinding.tvUnreadCart.setText("" + homeBean.getCart());
                                 globalCartCount=homeBean.getCart();
-                            }else
-                            {
+                            }else {
                                 listSalonBinding.tvUnreadCart.setText("0");
                                 listSalonBinding.tvUnreadCart.setVisibility(View.GONE);
                             }
                             if(homeBean.getNotifications()!=null) {
                                 listSalonBinding.tvUnreadNots.setText("" + homeBean.getNotifications());
-                            }else
-                            {
+                            }else {
                                 listSalonBinding.tvUnreadNots.setText("0");
                                 listSalonBinding.tvUnreadNots.setVisibility(View.GONE);
                             }
@@ -710,6 +767,7 @@ Context context;
 
                             if(homeBean.getUserRescheduledApt().size()!=0)
                             {
+                                NetworkChangeReceiver.aptReschedule=true;
                                 nActivity.startActivity(new Intent(nActivity, ActivityAppointmentDetails.class).putExtra("appId",""+homeBean.getUserRescheduledApt().get(0).getAptId()).putExtra("rescheduleApt","rescheduleApt"));
                             }
                             if(homeBean.getReferrerPoint()!=null && !homeBean.getReferrerPoint().isEmpty())
@@ -719,6 +777,40 @@ Context context;
                             {
                                 Preferences.setPreferenceValue(nActivity,REFERERPOINTKEY,"0");
                             }
+
+                            try {
+
+
+                                if(homeBean!=null) {
+                                    // listSalonBinding.slider.setAdapter(new ViewPagerSliderAdapter(nActivity, false, homeBean.getAdvertisement()));
+                                    Timer timer = new Timer();
+                                    timer.scheduleAtFixedRate(new SliderTimer(), 3000, 2000);
+                                    //    setPageNuber(homeBean.getAdvertisement().size(),i);
+
+
+                                    SliderAdapterExample adapter = new SliderAdapterExample(nActivity);
+
+                                    for(int i=0;i<homeBean.getAdvertisement().size();i++)
+                                    {
+                                        SliderItem sliderItem=new SliderItem();
+                                        sliderItem.setImageUrl(homeBean.getAdvertisement().get(i).getAdvImg());
+                                        sliderItem.setDescription(homeBean.getAdvertisement().get(i).getAdvUrl());
+                                        adapter.addItem(sliderItem);
+                                    }
+                                    listSalonBinding.sliderView.setSliderAdapter(adapter);
+
+                                    listSalonBinding.sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+                                    listSalonBinding.sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+                                    listSalonBinding.sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_LEFT);
+                                    listSalonBinding.sliderView.setIndicatorSelectedColor(Color.TRANSPARENT);
+                                    listSalonBinding.sliderView.setIndicatorUnselectedColor(Color.TRANSPARENT);
+                                    listSalonBinding.sliderView.setIndicatorEnabled(false);
+                                    listSalonBinding.sliderView.setAutoCycle(true);
+                                    listSalonBinding.sliderView.setScrollTimeInSec(5); //set scroll delay in seconds :
+                                    listSalonBinding.sliderView.startAutoCycle();
+                                }
+                            }catch (Exception e)
+                            {e.printStackTrace();}
                         }  else if(homeBean.getStatus()==3){
                             logout(nActivity);
                         }else {
@@ -727,6 +819,13 @@ Context context;
                             listSalonBinding.tvPopularSalon.setText("Popular Salon Nearby ("+homeResultList.size()+")");
                         }
 //                        cPresenter.updateCoinList(allCurrencyList);
+                        if(homeResultList.size()>0)
+                        {
+                            listSalonBinding.pullToRefresh.setVisibility(View.VISIBLE);
+                        }else
+                        {
+                            listSalonBinding.pullToRefresh.setVisibility(View.GONE);
+                        }
                         setEmptyMsg(homeResultList, listSalonBinding.recycleListsaloonView, listSalonBinding.layNoData.ivNoData);
                     }
                 });
@@ -741,6 +840,11 @@ Context context;
         try {
             lat=Preferences.getPreferenceValue(nActivity,"lat");
             lon=Preferences.getPreferenceValue(nActivity,"lon");
+            if(lat.equalsIgnoreCase("NA"))
+            {
+                lat="0";
+                lon="0";
+            }
             addresses = geocoder.getFromLocation(Double.parseDouble(lat), Double.parseDouble(lon), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
         } catch (IOException e) {
             e.printStackTrace();

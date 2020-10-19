@@ -72,9 +72,10 @@ public class PromoOffListAppDetailsAdapter extends RecyclerView.Adapter<PromoOff
             if(results.get(position).getProofferPrice()!=null || !results.get(position).getProofferPrice().isEmpty()) {
                 holder.tvComboprice.setText("₹ " + new DecimalFormat("##.##").format(Double.parseDouble(results.get(position).getProofferPrice())));
             }
-
+        holder.tvComboOfferPrice.setVisibility(View.GONE);
+        holder.tvComboprice.setVisibility(View.GONE);
             holder.recycleComboServicesOffers.setLayoutManager(new LinearLayoutManager(nActivity));
-            holder.recycleComboServicesOffers.setAdapter(new PromoOffAppDetailsServicesAdapter(nActivity, results.get(position).getServices(), false));
+            holder.recycleComboServicesOffers.setAdapter(new PromoOffAppDetailsServicesAdapter(nActivity,results.get(position) ,results.get(position).getServices(), false));
 
 
 

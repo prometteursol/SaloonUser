@@ -6,7 +6,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -27,6 +31,7 @@ import com.prometteur.saloonuser.Fragments.ServicesProfileFragment;
 import com.prometteur.saloonuser.Model.SalonDetailBean;
 import com.prometteur.saloonuser.R;
 import com.prometteur.saloonuser.Utils.HeaderView;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.Utils.Preferences;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -79,14 +84,15 @@ public class ActivitySalonProfile extends AppCompatActivity implements AppBarLay
         toolbarHeaderView=findViewById(R.id.toolbar_header_view);
         floatHeaderView=findViewById(R.id.float_header_view);
 
-        toolbarHeaderView.bindTo("Loading...", "Loading...", 0.0f, "0", "OPEN","0");
-        floatHeaderView.bindTo("Loading...", "Loading...", 0.0f, "0", "OPEN","0");
+        branchId=getIntent().getStringExtra("branchId");
+        mainCat=getIntent().getStringExtra("branchId");
+        toolbarHeaderView.bindTo("Loading...", "Loading...", 0.0f, "0", "OPEN","0","0","0");
+        floatHeaderView.bindTo("Loading...", "Loading...", 0.0f, "0", "OPEN","0","0","0");
         appBarLayout=findViewById(R.id.app_bar_layout);
         //toolbar=findViewById(R.id.toolbar);
         appBarLayout.addOnOffsetChangedListener(this);
         nActivity = this;
-        branchId=getIntent().getStringExtra("branchId");
-        mainCat=getIntent().getStringExtra("branchId");
+
 
         initTabs();
         int currentapiVersion = Build.VERSION.SDK_INT;
@@ -98,7 +104,7 @@ public class ActivitySalonProfile extends AppCompatActivity implements AppBarLay
 
         salonProfileBinding.tvComboOffers.setOnClickListener(this);
         salonProfileBinding.btnBookNow.setOnClickListener(this);
-        floatHeaderView.setOnClickListener(this);
+      //  floatHeaderView.setOnClickListener(this);
         if (isNetworkAvailable(nActivity)) {
             getSalonDetail();
         } else {
@@ -176,15 +182,16 @@ long mLastClickTimeBookNow=0;
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.tvComboOffers:
+                ActivityHomepage.comboSkip=1;
                 if (SystemClock.elapsedRealtime() - mLastClickTimeComboOffers < 2000) {
                     return;
                 }
                 mLastClickTimeComboOffers = SystemClock.elapsedRealtime();
                 startActivity(new Intent(nActivity,ActivityComboAndOffers.class).putExtra("branchId",branchId).putExtra("mainCat",mainCat));
                 break;
-                case R.id.float_header_view:
+                /*case R.id.float_header_view:
                 startActivity(new Intent(nActivity,ActivityHomepage.class).putExtra("branchId",branchId));
-                break;
+                break;*/
 
             case R.id.btnBookNow:
                 if (SystemClock.elapsedRealtime() - mLastClickTimeBookNow < 2000) {
@@ -206,6 +213,7 @@ long mLastClickTimeBookNow=0;
     public static SalonDetailBean salonDetailBean;
     String status="";
     public static SalonDetailBean.Topservice topItem;
+    public static int salonCount=0;
     private void getSalonDetail() {
 
         final ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
@@ -229,7 +237,18 @@ long mLastClickTimeBookNow=0;
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        if(e.getMessage().contains("502"))
+                        {
+                            if(salonCount<2) {
+                                salonCount++;
+                                getSalonDetail();
+                            }else{
+                               // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                            }
+                        }else
+                        {
+                           // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        }
                     }
 
                     @Override
@@ -272,17 +291,43 @@ long mLastClickTimeBookNow=0;
                             }
                             salonProfileBinding.headerViewStatus.setText(status);
                             String strDiscount="0";
-                            if(result.getDiscount()==null)
+                            String strComboDiscount="0";
+                            String strOfferDiscount="0";
+                            if(result.getOfferDiscount()==null || result.getOfferDiscount().isEmpty())
+                            {
+                                strOfferDiscount="0";
+                            }else
+                            {
+                                strOfferDiscount=result.getOfferDiscount();
+                            }
+                            if(result.getComboDiscount()==null || result.getComboDiscount().isEmpty())
+                            {
+                                strComboDiscount="0";
+                            }else
+                            {
+                                strComboDiscount=result.getComboDiscount();
+                            }
+                            if(result.getDiscount()==null || result.getDiscount().isEmpty())
                             {
                                 strDiscount="0";
                             }else
                             {
                                 strDiscount=result.getDiscount();
                             }
-                            toolbarHeaderView.bindTo(result.getBranName(), result.getBranCity(), rating, reviews, status,strDiscount);
-                            floatHeaderView.bindTo(result.getBranName(), result.getBranCity(), rating, reviews, status,result.getDiscount());
+                            if(Integer.parseInt(strDiscount)>Integer.parseInt(strComboDiscount) && Integer.parseInt(strDiscount)>Integer.parseInt(strOfferDiscount))
+                            {
+                                strDiscount=strDiscount;
+                            }else if(Integer.parseInt(strComboDiscount)>Integer.parseInt(strDiscount) && Integer.parseInt(strComboDiscount)>Integer.parseInt(strOfferDiscount))
+                            {
+                                strDiscount=strComboDiscount;
+                            }else
+                            {
+                                strDiscount=strOfferDiscount;
+                            }
+                            toolbarHeaderView.bindTo(result.getBranName(), result.getBranCity(), rating, reviews, status,strDiscount,result.getBranLat(),result.getBranLon());
+                            floatHeaderView.bindTo(result.getBranName(), result.getBranCity(), rating, reviews, status,strDiscount,result.getBranLat(),result.getBranLon());
                             try {
-                                Glide.with(ActivitySalonProfile.this).load(result.getBranImg()).into(salonProfileBinding.ivHeaderImg);
+                                Glide.with(ActivitySalonProfile.this).load(result.getBranImg()).placeholder(R.drawable.placeholder_gray_corner).error(R.drawable.placeholder_gray_corner).into(salonProfileBinding.ivHeaderImg);
                             }catch (Exception e)
                             {
                                 e.printStackTrace();
@@ -323,4 +368,28 @@ long mLastClickTimeBookNow=0;
                     }
                 });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
+
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
+    }
+
+
 }

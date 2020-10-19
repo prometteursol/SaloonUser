@@ -34,7 +34,20 @@
             android:orientation="vertical"
             android:padding="5dp">
 
-
+            <!--for offers only start-->
+            <com.prometteur.saloonuser.Utils.TextViewCustomFont
+                android:id="@+id/tvOfferName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="-1"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+            <!--for offers only end-->
             <com.prometteur.saloonuser.Utils.TextViewCustomFont
                 android:id="@+id/tvServiceName"
                 android:layout_width="match_parent"
@@ -103,7 +116,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.64"
+            android:layout_weight="0.50"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -120,7 +133,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text=""
+                    android:text="1234567890"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     />

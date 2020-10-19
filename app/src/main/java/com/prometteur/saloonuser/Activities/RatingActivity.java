@@ -3,6 +3,8 @@ package com.prometteur.saloonuser.Activities;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -24,6 +26,7 @@ import com.prometteur.saloonuser.Model.AppointDetailBean;
 import com.prometteur.saloonuser.Model.ReviewBean;
 import com.prometteur.saloonuser.Model.ReviewDetailsBean;
 import com.prometteur.saloonuser.R;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.Utils.TextViewCustomFont;
 import com.prometteur.saloonuser.retrofit.ApiInterface;
 import com.prometteur.saloonuser.retrofit.RetrofitInstance;
@@ -146,20 +149,21 @@ public class RatingActivity extends AppCompatActivity {
     ReviewBean reviewBean;
     private void setRatings() {
         jsonArray=new JSONArray();
-        for(int i=0;i<operators.size();i++)
-        {
-            JSONObject jsonObject=new JSONObject();
-            //{"rev_branch_id":"2","rev_operator_id":"4","rev_user_id":"6","rev_service_id":"6","rev_rating":"3.5"}
-            try {
-                jsonObject.put("rev_branch_id",operators.get(i).getRating());
-                jsonObject.put("rev_operator_id",""+operators.get(i).getUserId());
-                jsonObject.put("rev_user_id",USERIDVAL);
-                jsonObject.put("rev_service_id",operators.get(i).getSrvcId());
-                jsonObject.put("rev_rating",operators.get(i).getRating());
-                jsonObject.put("rev_apt_id",aptId);
-                jsonArray.put(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
+        if(operators!=null) {
+            for (int i = 0; i < operators.size(); i++) {
+                JSONObject jsonObject = new JSONObject();
+                //{"rev_branch_id":"2","rev_operator_id":"4","rev_user_id":"6","rev_service_id":"6","rev_rating":"3.5"}
+                try {
+                    jsonObject.put("rev_branch_id", operators.get(i).getRating());
+                    jsonObject.put("rev_operator_id", "" + operators.get(i).getUserId());
+                    jsonObject.put("rev_user_id", USERIDVAL);
+                    jsonObject.put("rev_service_id", operators.get(i).getSrvcId());
+                    jsonObject.put("rev_rating", operators.get(i).getRating());
+                    jsonObject.put("rev_apt_id", aptId);
+                    jsonArray.put(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
         operatorReview=jsonArray.toString();
@@ -184,7 +188,7 @@ public class RatingActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(RatingActivity.this,  getResources().getString(R.string.went_wrong));
+                      //  showFailToast(RatingActivity.this,  getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -231,7 +235,7 @@ public class RatingActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(RatingActivity.this, getResources().getString(R.string.went_wrong));
+                        //showFailToast(RatingActivity.this, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -254,6 +258,26 @@ public class RatingActivity extends AppCompatActivity {
                     }
                 });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
 
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
+    }
 
 }

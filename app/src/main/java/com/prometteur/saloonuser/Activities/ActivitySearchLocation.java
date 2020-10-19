@@ -1,6 +1,8 @@
 package com.prometteur.saloonuser.Activities;
 
 import android.app.Activity;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 
@@ -9,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.prometteur.saloonuser.Adapter.LocationSearchListAdapter;
 import com.prometteur.saloonuser.R;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.databinding.ActivitySearchLocationBinding;
 
 public class ActivitySearchLocation extends AppCompatActivity implements View.OnClickListener {
@@ -42,7 +45,27 @@ public class ActivitySearchLocation extends AppCompatActivity implements View.On
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
 
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
+    }
 
 
 }

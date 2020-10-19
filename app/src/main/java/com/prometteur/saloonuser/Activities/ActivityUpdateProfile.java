@@ -4,8 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,6 +35,7 @@ import com.prometteur.saloonuser.Model.LoginBean;
 import com.prometteur.saloonuser.Model.UpdateLocationBean;
 import com.prometteur.saloonuser.R;
 import com.prometteur.saloonuser.Utils.ImagePickerActivity;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.Utils.Preferences;
 import com.prometteur.saloonuser.databinding.ActivityUpdateProfileBinding;
 import com.prometteur.saloonuser.retrofit.ApiInterface;
@@ -113,7 +116,7 @@ public class ActivityUpdateProfile extends AppCompatActivity implements View.OnC
             updateProfileBinding.rbOther.setChecked(true);
         }
         if (!USERPROFILE.isEmpty()) {
-            Glide.with(ActivityUpdateProfile.this).load(USERPROFILE).error(R.drawable.img_profile).into(updateProfileBinding.civProfileimg);
+            Glide.with(ActivityUpdateProfile.this).load(USERPROFILE).placeholder(R.drawable.placeholder_gray_circle).error(R.drawable.placeholder_gray_circle).into(updateProfileBinding.civProfileimg);
         }
 
         if (getIntent().getStringExtra("fromScreen").equalsIgnoreCase("reg")) {
@@ -362,7 +365,7 @@ public class ActivityUpdateProfile extends AppCompatActivity implements View.OnC
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ActivityUpdateProfile.this, getResources().getString(R.string.went_wrong));
+                       // showFailToast(ActivityUpdateProfile.this, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -405,7 +408,7 @@ public class ActivityUpdateProfile extends AppCompatActivity implements View.OnC
                                 updateProfileBinding.rbOther.setChecked(true);
                             }
                             if (!USERPROFILE.isEmpty()) {
-                                Glide.with(ActivityUpdateProfile.this).load(USERPROFILE).error(R.drawable.img_profile).into(updateProfileBinding.civProfileimg);
+                                Glide.with(ActivityUpdateProfile.this).load(USERPROFILE).placeholder(R.drawable.placeholder_gray_circle).error(R.drawable.placeholder_gray_circle).into(updateProfileBinding.civProfileimg);
                             }
                             showSuccessToast(ActivityUpdateProfile.this, "Profile updated successfully");
                             //startActivityForResult(new Intent(ActivityUpdateProfile.this, SuccessDialogActivity.class).putExtra("msg","Your request has been submitted successfully, system admin will get back to you shortly"),resultCodeChangePass);
@@ -435,7 +438,7 @@ public class ActivityUpdateProfile extends AppCompatActivity implements View.OnC
                 .build(ActivityUpdateProfile.this);
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
     }
-
+public static int updateLocCount2=0;
     private void getUpdateLocation(final String address) {
 
         ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
@@ -459,7 +462,18 @@ public class ActivityUpdateProfile extends AppCompatActivity implements View.OnC
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(ActivityUpdateProfile.this, getResources().getString(R.string.went_wrong));
+                        if(e.getMessage().contains("502"))
+                        {
+                            if(updateLocCount2<2) {
+                                updateLocCount2++;
+                                getUpdateLocation(address);
+                            }else{
+                                //showFailToast(ActivityUpdateProfile.this, getResources().getString(R.string.went_wrong));
+                            }
+                        }else
+                        {
+                            //showFailToast(ActivityUpdateProfile.this, getResources().getString(R.string.went_wrong));
+                        }
                     }
 
                     @Override
@@ -491,5 +505,27 @@ public class ActivityUpdateProfile extends AppCompatActivity implements View.OnC
             super.onBackPressed();
         }
         //
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
+
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
     }
 }

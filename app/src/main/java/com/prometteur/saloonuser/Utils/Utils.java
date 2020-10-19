@@ -23,10 +23,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.prometteur.saloonuser.Activities.ActivityHomepage;
 import com.prometteur.saloonuser.Activities.ActivityLogin;
+import com.prometteur.saloonuser.Adapter.SelectOperatorBottomAdapter;
+import com.prometteur.saloonuser.Model.RemoveCartBean;
 import com.prometteur.saloonuser.Model.SignoutBean;
 import com.prometteur.saloonuser.R;
 import com.prometteur.saloonuser.retrofit.ApiInterface;
@@ -51,7 +56,15 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.alertDialog;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.comboSkip;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.dateTimeOneTime;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.getLocationPermission;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.globalCartCount;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.menuPos;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.strAppDate;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.strDate;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.strTime;
 import static com.prometteur.saloonuser.Constants.ConstantVariables.USERIDVAL;
 import static com.prometteur.saloonuser.Utils.Preferences.getClearPrefs;
 
@@ -188,30 +201,26 @@ public class Utils {
         RequestBody body = RequestBody.create(MediaType.parse("multipart/form-data"), data);
         return body;
     }
+    public static Dialog dialog1=null;
 
     public static Dialog showProgress(Context context, int txtType) {
         // custom dialog
-        final Dialog dialog = new Dialog(context);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        dialog.setContentView(R.layout.dialog_progress);
-        // set the custom dialog components - text, image and button
-        //ImageView ivLogo = (ImageView) dialog.findViewById(R.id.ivLogo);
-        TextView text = (TextView) dialog.findViewById(R.id.tvProgressMsg);
-       /* if (txtType == 0) {
-            text.setText(context.getResources().getString(R.string.please_wait));
-        } else {
-            text.setText(context.getResources().getString(R.string.loading));
-        }*/
-        ImageView image = (ImageView) dialog.findViewById(R.id.image);
-        //image.setImageResource(R.drawable.iclau);
+        if(menuPos == 0 &&   comboSkip!=1) {
+            if (dialog1 != null) {
+                dialog1.dismiss();
+            }
+        }
+          dialog1 = new Dialog(context);
+            dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            dialog1.setContentView(R.layout.dialog_progress);
 
-        // Glide.with(context).load(R.drawable.salon_gif_logo).into(ivLogo);
 
-        return dialog;
+        return dialog1;
 
     }
-    public static Dialog dialog;
+    public static Dialog dialog=null;
     public static void showNoInternetDialog(Context context) {
+
         // custom dialog
         if(dialog==null) {
             dialog = new Dialog(context);
@@ -219,16 +228,10 @@ public class Utils {
         dialog.setContentView(R.layout.dialog_no_internet);
         dialog.setCancelable(false);
         dialog.show();
+
+
     }
-    public static void showNoInternetDialogReceiver(Context context) {
-        // custom dialog
-        if(dialog==null) {
-            dialog = new Dialog(context);
-        }
-        dialog.setContentView(R.layout.dialog_no_internet);
-        dialog.setCancelable(false);
-        dialog.show();
-    }
+
 
     public static void setNoInternetMsg(RecyclerView recyclerView, ImageView ivNoAppoint) {
 
@@ -314,7 +317,7 @@ public class Utils {
                 slotEndTime = slotEndTime.replace("am", "AM");
                 slotEndTime = slotEndTime.replace("pm", "PM");
                 timeSlots.add(slotEndTime);
-                Log.d("DATE", slotEndTime);
+               // Log.d("DATE", slotEndTime);
             }
 
         } catch (Exception e) {
@@ -394,8 +397,7 @@ public class Utils {
     }
 
     public static void logout(Context context) {
-
-        getLogOut(context);
+        getRemoveAllCart(context);
 
         getClearPrefs(context);
         context.startActivity(new Intent(context, ActivityLogin.class));
@@ -445,16 +447,22 @@ public class Utils {
             if (!gps_enabled && !network_enabled) {
                 // notify user
                 try {
-                    new AlertDialog.Builder(context)
-                            .setMessage("GPS Location not enabled")
-                            .setPositiveButton("Open Location setting", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                                    context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                                }
-                            })
-                            //.setNegativeButton(R.string.Cancel,null)
-                            .show();
+                    AlertDialog dialog=alertDialog.create();
+
+                        alertDialog
+                                .setMessage("GPS Location not enabled")
+                                .setPositiveButton("Open Location setting", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                                        context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                    }
+                                })
+                                .setCancelable(false);
+                                //.setNegativeButton(R.string.Cancel,null)
+
+                    if(!dialog.isShowing()) {
+                        dialog.show();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -562,7 +570,7 @@ public class Utils {
 
                     @Override
                     public void onError(Throwable e) {
-                        showFailToast(context, context.getResources().getString(R.string.went_wrong));
+                       // showFailToast(context, context.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -579,5 +587,116 @@ public class Utils {
 
 
     }
+    public static int TYPE_WIFI = 1;
+    public static int TYPE_MOBILE = 2;
+    public static int TYPE_NOT_CONNECTED = 0;
+    public static int getConnectivityStatus(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (null != activeNetwork) {
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
+                return TYPE_WIFI;
+
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+                return TYPE_MOBILE;
+        }
+        return TYPE_NOT_CONNECTED;
+    }
+
+    public static String getConnectivityStatusString(Context context) {
+        int conn = Utils.getConnectivityStatus(context);
+        String status = null;
+        if (conn == Utils.TYPE_WIFI) {
+            status = "Wifi enabled";
+        } else if (conn == Utils.TYPE_MOBILE) {
+            status = "Mobile data enabled";
+        } else if (conn == Utils.TYPE_NOT_CONNECTED) {
+            status = "Not connected to Internet";
+        }
+        return status;
+    }
+
+
+
+    static RemoveCartBean removeAllCart;
+    private static void getRemoveAllCart(final Context nActivity) {
+
+        final ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
+        final Dialog progressDialog = showProgress(nActivity, 0);
+        progressDialog.show();
+        service.getRemoveAllCart(USERIDVAL)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<RemoveCartBean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(RemoveCartBean loginBeanObj) {
+                        try {
+                            if (progressDialog != null && progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                            }
+                        }catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                        removeAllCart = loginBeanObj;
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getLogOut(nActivity);
+                        try {
+                            if (progressDialog != null && progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                            }
+                        }catch (Exception e1)
+                        {
+                            e1.printStackTrace();
+                        }
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        // Updates UI with data
+                        try {
+                            if (progressDialog != null && progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                            }
+                        }catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+
+                        if (removeAllCart.getStatus() == 1) {
+
+                            globalCartCount=0;
+
+                            dateTimeOneTime=false;
+                            Preferences.setPreferenceValue(nActivity, "dateTimeOneTime","false");
+                            Preferences.setPreferenceValue(nActivity, "oneTimeSalonId","0");
+                            strTime="";
+                            strDate="";strAppDate="";
+                            Preferences.setPreferenceValue(nActivity, "dateTime","");
+                            Preferences.setPreferenceValue(nActivity,"couponCode","");
+                            Preferences.setPreferenceValue(nActivity,"couponDesc","");
+                            Preferences.setPreferenceValue(nActivity,"couponOffPrice","0");
+                           // showSuccessToast(nActivity, "" + removeAllCart.getMsg());
+                            //Preferences.setPreferenceValue(nActivity, "oneTimeSalonId",branchId);
+                            getLogOut(nActivity);
+                        } else if (removeAllCart.getStatus() == 3) {
+                            showFailToast(nActivity, "" + removeAllCart.getMsg());
+                            logout(nActivity);
+                        }
+                        //setEmptyMsg(mDataList, comboPageBinding.recycleCombolist, ivNoData);
+                    }
+                });
+    }
 }

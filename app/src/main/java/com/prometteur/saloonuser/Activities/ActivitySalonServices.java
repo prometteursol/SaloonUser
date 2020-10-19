@@ -3,6 +3,8 @@ package com.prometteur.saloonuser.Activities;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.TextUtils;
@@ -27,6 +29,7 @@ import com.prometteur.saloonuser.Model.ComboOffBean;
 import com.prometteur.saloonuser.Model.SalonDetailBean;
 import com.prometteur.saloonuser.Model.ServicesBean;
 import com.prometteur.saloonuser.R;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.databinding.ActivitySalonServicesBinding;
 import com.prometteur.saloonuser.databinding.DialogAccountCreatedBinding;
 import com.prometteur.saloonuser.retrofit.ApiInterface;
@@ -45,10 +48,14 @@ import static com.prometteur.saloonuser.Activities.ActivityComboAndOffers.mainCa
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.brands;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.brandsArr;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.category;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.comboSkip;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.highToLow;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.isFilter;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.lowToHigh;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.selectedCats;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.selectedCatsText;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.sortBy;
+import static com.prometteur.saloonuser.Fragments.FragmentListSalonView.listSalonBinding;
 import static com.prometteur.saloonuser.Utils.Utils.isNetworkAvailable;
 import static com.prometteur.saloonuser.Utils.Utils.logout;
 import static com.prometteur.saloonuser.Utils.Utils.setEmptyMsg;
@@ -76,11 +83,7 @@ public class ActivitySalonServices extends AppCompatActivity implements View.OnC
         LinearLayoutManager layoutManager = new LinearLayoutManager(nActivity);
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
 
-        if (isNetworkAvailable(nActivity)) {
-            getServices();
-        } else {
-            showNoInternetDialog(nActivity);
-        }
+
 
         List<String> mainServices = new ArrayList<>();
         mainServices.add("All Services");
@@ -102,6 +105,11 @@ public class ActivitySalonServices extends AppCompatActivity implements View.OnC
             mainServices.add("Makeup");
         }
         boolean selectAll=false;
+        if(selectedCats.contains("0"))
+        {
+            selectedCats=new ArrayList<>();
+            selectedCatsText=new ArrayList<>();
+        }
         if(selectedCats.size()==0)
         {
             selectAll=true;
@@ -169,6 +177,7 @@ public class ActivitySalonServices extends AppCompatActivity implements View.OnC
                     return;
                 }
                 mLastClickTimeComboOffers = SystemClock.elapsedRealtime();
+                comboSkip=1;
                 startActivity(new Intent(nActivity, ActivityComboAndOffers.class).putExtra("branchId", branchId).putExtra("mainCat",mainCat));
                 break;
             case R.id.btnBookNow:
@@ -177,18 +186,29 @@ public class ActivitySalonServices extends AppCompatActivity implements View.OnC
                 }
                 mLastClickTimeGoToCart = SystemClock.elapsedRealtime();
                 startActivity(new Intent(nActivity, CartActivity.class).putExtra("branchId", branchId).putExtra("mainCat",mainCat));
-                nActivity.finish();
+                //nActivity.finish();
                 break;
         }
     }
 
     public static ServicesBean servicesBean;
+    public static int serviceCount=0;
     public static List<ServicesBean.Result> mDataList;
     public static void getServices() {
         mDataList=new ArrayList<>();
         final ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
         final Dialog progressDialog = showProgress(nActivity, 0);
-        progressDialog.show();
+        if(!nActivity.isFinishing())
+        {
+            if(!progressDialog.isShowing()) {
+                try {
+                    progressDialog.show();
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         if(selectedCats.contains("0"))
         {
@@ -211,20 +231,37 @@ public class ActivitySalonServices extends AppCompatActivity implements View.OnC
 
                     @Override
                     public void onNext(ServicesBean loginBeanObj) {
-                        progressDialog.dismiss();
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
                         servicesBean = loginBeanObj;
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                        if(e.getMessage().contains("502"))
+                        {
+                            if(serviceCount<2) {
+                                serviceCount++;
+                                getServices();
+                            }else{
+                               // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                            }
+                        }else
+                        {
+                           // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        }
                     }
 
                     @Override
                     public void onComplete() {
                         // Updates UI with data
-                        progressDialog.dismiss();
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
 
                         if (servicesBean.getStatus() == 1) {
                             mDataList = servicesBean.getResult();
@@ -241,29 +278,37 @@ public class ActivitySalonServices extends AppCompatActivity implements View.OnC
                 });
     }
 
-  /*  Dialog dialogRequestSend;
-    DialogAccountCreatedBinding requestSendBinding;
-    private void showRequestSendDialog(final Activity inActivity) {
-        dialogRequestSend=new Dialog(inActivity,R.style.CustomAlertDialog);
-        requestSendBinding = DialogAccountCreatedBinding.inflate(LayoutInflater.from(inActivity));
-        dialogRequestSend.setContentView(requestSendBinding.getRoot());
-        Window window = dialogRequestSend.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.gravity = Gravity.CENTER;
-        window.setAttributes(wlp);
-        dialogRequestSend.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT);
-        requestSendBinding.ivCongoimg.setImageDrawable(inActivity.getResources().getDrawable(R.drawable.ic_tick_inside_circle_blue));
-        requestSendBinding.tvAccountCreated.setText(nActivity.getResources().getString(R.string.Your_appointment_booking_request));
-        requestSendBinding.btnDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialogRequestSend.dismiss();
-                startActivity(new Intent(inActivity, ActivityAppointmentDetails.class));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(isFilter)
+        {
+            salonServicesBinding.ivFilterimg.setImageResource(R.drawable.ic_filter_filled);
+        }else
+        {
+            salonServicesBinding.ivFilterimg.setImageResource(R.drawable.ic_filter_icon);
+        }
+        if (isNetworkAvailable(nActivity)) {
+            getServices();
+        } else {
+            showNoInternetDialog(nActivity);
+        }
+        checkInternet();
+    }
 
-            }
-        });
-        dialogRequestSend.show();
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
 
-    }*/
+        }
+    }
 }

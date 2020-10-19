@@ -158,7 +158,7 @@ holder.ivRemoveCombo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -167,7 +167,10 @@ holder.ivRemoveCombo.setOnClickListener(new View.OnClickListener() {
                         progressDialog.dismiss();
 
                         if (cartDetailBean.getStatus() == 1) {
-
+                            Preferences.setPreferenceValue(nActivity, "couponId", "0");
+                            Preferences.setPreferenceValue(nActivity, "couponCode", "");
+                            Preferences.setPreferenceValue(nActivity, "couponDesc", "");
+                            Preferences.setPreferenceValue(nActivity, "couponOffPrice", "0");
                             if(globalCartCount==1){
                                 dateTimeOneTime=false;
                                 Preferences.setPreferenceValue(nActivity, "dateTimeOneTime","false");

@@ -22,6 +22,7 @@ import static com.prometteur.saloonuser.Constants.ConstantVariables.USERSESSIONV
 public class RetrofitInstanceForPay {
    public static Retrofit retrofit;
     static String BASE_URL="http://survey.sairoses.com/eu/";
+//    static String BASE_URL="https://mooi.app/eu/";
     public RetrofitInstanceForPay()
     {
 

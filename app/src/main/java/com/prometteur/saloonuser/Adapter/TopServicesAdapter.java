@@ -44,10 +44,15 @@ public class TopServicesAdapter extends RecyclerView.Adapter<TopServicesAdapter.
         holder.bind(position,listener);
         holder.linlayItem.setBackgroundColor(nActivity.getResources().getColor(ConstantVariables.colorList[position]));
         holder.tvServices.setText(topservices.get(position).getSrvcCategory());
-        if(topservices.get(position).getTypes().equalsIgnoreCase("1")) {
-            holder.tvTypes.setText(topservices.get(position).getTypes() + " Type");
-        }else {
-            holder.tvTypes.setText(topservices.get(position).getTypes() + " Types");
+        if(topservices.get(position).getTypes()!=null) {
+            if (topservices.get(position).getTypes().equalsIgnoreCase("1")) {
+                holder.tvTypes.setText(topservices.get(position).getTypes() + " Type");
+            } else {
+                holder.tvTypes.setText(topservices.get(position).getTypes() + " Types");
+            }
+        }else
+        {
+            holder.tvTypes.setText("0 Types");
         }
     }
 

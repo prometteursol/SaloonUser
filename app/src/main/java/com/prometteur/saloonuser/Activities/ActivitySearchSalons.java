@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,6 +20,7 @@ import com.prometteur.saloonuser.Model.SalonDetailBean;
 import com.prometteur.saloonuser.Model.SearchBean;
 import com.prometteur.saloonuser.R;
 
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.databinding.ActivitySearchSalonsBinding;
 import com.prometteur.saloonuser.retrofit.ApiInterface;
 import com.prometteur.saloonuser.retrofit.RetrofitInstance;
@@ -113,7 +116,7 @@ public class ActivitySearchSalons extends AppCompatActivity implements View.OnCl
                     @Override
                     public void onError(Throwable e) {
                        // progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                     //   showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -136,5 +139,27 @@ public class ActivitySearchSalons extends AppCompatActivity implements View.OnCl
                         setEmptyMsg(mDataList, searchSalonsBinding.recycleSalonAddressResults, searchSalonsBinding.includeEmpty.ivNoData);
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
+
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
     }
 }

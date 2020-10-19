@@ -60,8 +60,8 @@ public class MyCustomAdapterForItems implements GoogleMap.InfoWindowAdapter {
             Glide.with(mContext).load(clickedClusterItem.getHotelGalaryPhotos())
                     .override(80, 80) // made the difference
                     .thumbnail(0.5f)
-                    .placeholder(R.drawable.img_login)
-                    .error(R.drawable.img_login).into(IV_hotel_photo);
+                    .placeholder(R.drawable.placeholder_gray_corner)
+                    .error(R.drawable.placeholder_gray_corner).into(IV_hotel_photo);
             //  Log.e("img",clickedClusterItem.getHotelGalaryPhotos());
           /*  Glide.with(mContext)
                     .asBitmap()
@@ -137,7 +137,7 @@ public class MyCustomAdapterForItems implements GoogleMap.InfoWindowAdapter {
                         }
                     });*/
         } else {
-            IV_hotel_photo.setImageResource(R.drawable.img_login);
+            IV_hotel_photo.setImageResource(R.drawable.img_mooi_logo_bg);
         }
 
 

@@ -350,6 +350,12 @@ this.brands = brands;
         @SerializedName("discount")
         @Expose
         private String discount;
+        @SerializedName("combo_discount")
+        @Expose
+        private String comboDiscount;
+        @SerializedName("offer_discount")
+        @Expose
+        private String offerDiscount;
         private final static long serialVersionUID = -4158311341946606274L;
 
         @SerializedName("bran_cat_main")
@@ -434,6 +440,22 @@ this.brands = brands;
 
         public void setDiscount(String discount) {
             this.discount = discount;
+        }
+
+        public String getComboDiscount() {
+            return comboDiscount;
+        }
+
+        public void setComboDiscount(String comboDiscount) {
+            this.comboDiscount = comboDiscount;
+        }
+
+        public String getOfferDiscount() {
+            return offerDiscount;
+        }
+
+        public void setOfferDiscount(String offerDiscount) {
+            this.offerDiscount = offerDiscount;
         }
 
         public String getBranAddr() {

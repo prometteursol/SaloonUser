@@ -35,6 +35,12 @@ private RedeemPoints redeemPoints;
     @SerializedName("min_redeem_point_required")
     @Expose
     private String minRedeemPointRequired;
+    @SerializedName("total_mooi_discount")
+    @Expose
+    private String totalMooiDiscount;
+    @SerializedName("salon_discount")
+    @Expose
+    private String salonDiscount;
 private final static long serialVersionUID = 7650736166330598575L;
 
 public Integer getStatus() {
@@ -106,6 +112,22 @@ this.redeemPoints = redeemPoints;
 
     public void setMinRedeemPointRequired(String minRedeemPointRequired) {
         this.minRedeemPointRequired = minRedeemPointRequired;
+    }
+
+    public String getTotalMooiDiscount() {
+        return totalMooiDiscount;
+    }
+
+    public void setTotalMooiDiscount(String totalMooiDiscount) {
+        this.totalMooiDiscount = totalMooiDiscount;
+    }
+
+    public String getSalonDiscount() {
+        return salonDiscount;
+    }
+
+    public void setSalonDiscount(String salonDiscount) {
+        this.salonDiscount = salonDiscount;
     }
 
     public class Detail implements Serializable
@@ -671,6 +693,10 @@ this.redeemPoints = redeemPoints;
         @SerializedName("operators")
         @Expose
         private List<Operator> operators = null;
+
+        //for offers name
+        private String offerName;
+
         private final static long serialVersionUID = -1130938076855724352L;
 
         public String getSrvcId() {
@@ -743,6 +769,14 @@ this.redeemPoints = redeemPoints;
 
         public void setCartId(String cartId) {
             this.cartId = cartId;
+        }
+
+        public String getOfferName() {
+            return offerName;
+        }
+
+        public void setOfferName(String offerName) {
+            this.offerName = offerName;
         }
     }
 }

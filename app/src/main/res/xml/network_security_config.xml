@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">survey.sairoses.com</domain>
+        <domain includeSubdomains="true">mooi.app</domain>
     </domain-config>
 </network-security-config>

@@ -14,7 +14,7 @@
         android:id="@+id/profile_image"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/_100sdp"
-        android:src="@drawable/sample_hotel_pic"
+        android:src="@drawable/img_mooi_logo_bg"
         android:scaleType="center"
         app:siRadius="10dp"
         app:siSquare="true"

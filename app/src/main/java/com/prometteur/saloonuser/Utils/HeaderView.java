@@ -3,6 +3,8 @@ package com.prometteur.saloonuser.Utils;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.prometteur.saloonuser.Activities.ActivityHomepage;
 import com.prometteur.saloonuser.R;
 import com.prometteur.saloonuser.databinding.HeaderViewBinding;
 
@@ -61,15 +64,28 @@ LinearLayout linBadge;
 
     }
 
-    public void bindTo(String title) {
+   /* public void bindTo(String title) {
         bindTo(title, "",0,"0","OPEN","0");
-    }
+    }*/
 
-    public void bindTo(String title, String subTitle,float ratingBarVal,String reviewCount,String status,String discount) {
+    public void bindTo(final String title, String subTitle, float ratingBarVal, String reviewCount, String status, String discount, final String lat, final String lon) {
         hideOrSetText(this.title, title);
         hideOrSetText(this.subTitle, subTitle);
         hideOrSetTextDis(this.tvDiscount, discount);
-
+        final TextView tit=this.title;
+        this.title.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //view.getContext().startActivity(new Intent(view.getContext(),ActivityHomepage.class).putExtra("branchId",branchId));
+                showMap(tit.getContext(),lat,lon);
+            }
+        });this.subTitle.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //view.getContext().startActivity(new Intent(view.getContext(), ActivityHomepage.class).putExtra("branchId",branchId));
+                showMap(tit.getContext(),lat,lon);
+            }
+        });
         if(!status.equalsIgnoreCase("OPEN"))
         {
             this.header_view_status.setBackground(getResources().getDrawable(R.drawable.status_rounded_red_background));
@@ -143,6 +159,17 @@ public void hideShowBadge(boolean badgeFlag)
         linBadge.setVisibility(GONE);
     }
 }*/
-
+private void showMap(Context context,String lat,String lon)
+{
+    try {
+        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lon + "");
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        context.startActivity(mapIntent);
+    }catch (Exception e)
+    {
+        e.printStackTrace();
+    }
+}
 
 }

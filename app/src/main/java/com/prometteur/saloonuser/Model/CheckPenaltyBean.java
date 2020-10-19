@@ -8,58 +8,65 @@ import com.google.gson.annotations.SerializedName;
 public class CheckPenaltyBean implements Serializable
 {
 
-@SerializedName("status")
-@Expose
-private Integer status;
-@SerializedName("msg")
-@Expose
-private String msg;
-@SerializedName("result")
-@Expose
-private List<String> result = null;
-@SerializedName("penalty_percentage")
-@Expose
-private List<String> penaltyPercentage = null;
-private final static long serialVersionUID = 51645878410159632L;
 
-public Integer getStatus() {
-return status;
-}
+    @SerializedName("status")
+    @Expose
+    private Integer status;
+    @SerializedName("msg")
+    @Expose
+    private String msg;
+    @SerializedName("result")
+    @Expose
+    private List<String> result = null;
+    @SerializedName("penalty_percentage")
+    @Expose
+    private List<String> penaltyPercentage = null;
+    @SerializedName("ps_start_time")
+    @Expose
+    private String psStartTime;
+    @SerializedName("ps_end_time")
+    @Expose
+    private String psEndTime;
+    private final static long serialVersionUID = 4580084018399113379L;
 
-public void setStatus(Integer status) {
-this.status = status;
-}
+    public Integer getStatus() {
+        return status;
+    }
 
-public CheckPenaltyBean withStatus(Integer status) {
-this.status = status;
-return this;
-}
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
-public String getMsg() {
-return msg;
-}
+    public CheckPenaltyBean withStatus(Integer status) {
+        this.status = status;
+        return this;
+    }
 
-public void setMsg(String msg) {
-this.msg = msg;
-}
+    public String getMsg() {
+        return msg;
+    }
 
-public CheckPenaltyBean withMsg(String msg) {
-this.msg = msg;
-return this;
-}
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 
-public List<String> getResult() {
-return result;
-}
+    public CheckPenaltyBean withMsg(String msg) {
+        this.msg = msg;
+        return this;
+    }
 
-public void setResult(List<String> result) {
-this.result = result;
-}
+    public List<String> getResult() {
+        return result;
+    }
 
-public CheckPenaltyBean withResult(List<String> result) {
-this.result = result;
-return this;
-}
+    public void setResult(List<String> result) {
+        this.result = result;
+    }
+
+    public CheckPenaltyBean withResult(List<String> result) {
+        this.result = result;
+        return this;
+    }
 
     public List<String> getPenaltyPercentage() {
         return penaltyPercentage;
@@ -68,4 +75,36 @@ return this;
     public void setPenaltyPercentage(List<String> penaltyPercentage) {
         this.penaltyPercentage = penaltyPercentage;
     }
+
+    public CheckPenaltyBean withPenaltyPercentage(List<String> penaltyPercentage) {
+        this.penaltyPercentage = penaltyPercentage;
+        return this;
+    }
+
+    public String getPsStartTime() {
+        return psStartTime;
+    }
+
+    public void setPsStartTime(String psStartTime) {
+        this.psStartTime = psStartTime;
+    }
+
+    public CheckPenaltyBean withPsStartTime(String psStartTime) {
+        this.psStartTime = psStartTime;
+        return this;
+    }
+
+    public String getPsEndTime() {
+        return psEndTime;
+    }
+
+    public void setPsEndTime(String psEndTime) {
+        this.psEndTime = psEndTime;
+    }
+
+    public CheckPenaltyBean withPsEndTime(String psEndTime) {
+        this.psEndTime = psEndTime;
+        return this;
+    }
+
 }

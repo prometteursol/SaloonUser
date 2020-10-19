@@ -80,6 +80,8 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.branchId;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.homeBean;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.strLat;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.strLong;
 import static com.prometteur.saloonuser.Constants.ConstantVariables.USERCITY;
 import static com.prometteur.saloonuser.Constants.ConstantVariables.USERFNAME;
 import static com.prometteur.saloonuser.Constants.ConstantVariables.USERIDVAL;
@@ -161,6 +163,7 @@ public class FragmentMapListSalonView extends Fragment implements OnMapReadyCall
                     mapViewBinding.tvUserAddress.setText("Select Location >");
                 }
                 mapViewBinding.ivSearchimg.setOnClickListener(FragmentMapListSalonView.this);
+                mapViewBinding.tvUserName.setOnClickListener(FragmentMapListSalonView.this);
                 mapViewBinding.tvUserAddress.setOnClickListener(FragmentMapListSalonView.this);
                 mapViewBinding.tvUserAddressTemp.setOnClickListener(FragmentMapListSalonView.this);
                 mapViewBinding.ivNotification.setOnClickListener(FragmentMapListSalonView.this);
@@ -327,16 +330,17 @@ int pos=0;
 
                     clusterItems.add(new MapClusterItem(new LatLng(latitude, longitude),homeResultList.get(i).getBranName(), homeResultList.get(i).getBranId(),
                             homeResultList.get(i).getDistance().replace("KM"," KM"), (String) homeResultList.get(i).getSalonRating(), homeResultList.get(i).getBranImg()));
-if(!branchId.equalsIgnoreCase("0")){
-    try {
-        if(branchId.equalsIgnoreCase(homeResultList.get(i).getBranId())) {
-            pos=i;
+if(branchId!=null) {
+    if (!branchId.equalsIgnoreCase("0")) {
+        try {
+            if (branchId.equalsIgnoreCase(homeResultList.get(i).getBranId())) {
+                pos = i;
+            }
+        } catch (NumberFormatException ex) { // handle your exception
+            ex.printStackTrace();
         }
-    } catch (NumberFormatException ex) { // handle your exception
-        ex.printStackTrace();
     }
 }
-
                 }
                 mClusterManager.clearItems();
                 mClusterManager.addItems(clusterItems);
@@ -351,6 +355,9 @@ if(!branchId.equalsIgnoreCase("0")){
 
 
 
+            }else
+            {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom( new LatLng(Double.parseDouble(strLat), Double.parseDouble(strLong)), Default_Zoom));
             }
 
         }
@@ -425,6 +432,7 @@ if(!branchId.equalsIgnoreCase("0")){
 
             case R.id.tvUserAddress:
             case R.id.tvUserAddressTemp:
+            case R.id.tvUserName:
                 getStartPlaceLocation();
                 //startActivity(new Intent(nActivity, ActivitySearchLocation.class));
                 break;
@@ -518,7 +526,7 @@ if(!branchId.equalsIgnoreCase("0")){
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, getResources().getString(R.string.went_wrong));
+                      //  showFailToast(nActivity, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override

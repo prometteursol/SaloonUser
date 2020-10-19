@@ -3,6 +3,7 @@ package com.prometteur.saloonuser.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -68,7 +69,8 @@ public class FragmentAboutSalon extends Fragment {
 aboutSalonBinding.tvAddress.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
-        startActivity(new Intent(nActivity, ActivityHomepage.class).putExtra("branchId",result.getBranId()));
+        //startActivity(new Intent(nActivity, ActivityHomepage.class).putExtra("branchId",result.getBranId()));
+        showMap(nActivity,result.getBranLat(),result.getBranLon());
     }
 });
                 if (!result.getBranWorkingHrs().isEmpty()) {
@@ -96,5 +98,13 @@ aboutSalonBinding.tvAddress.setOnClickListener(new View.OnClickListener() {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         nActivity= (Activity) context;
+    }
+
+    private void showMap(Context context, String lat, String lon)
+    {
+        Uri gmmIntentUri = Uri.parse("google.navigation:q="+lat+","+lon+"");
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        context.startActivity(mapIntent);
     }
 }

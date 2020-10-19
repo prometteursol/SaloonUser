@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,6 +16,7 @@ import com.prometteur.saloonuser.Model.NotificationBean;
 import com.prometteur.saloonuser.Model.NotificationsPojo;
 import com.prometteur.saloonuser.Model.UpdateLocationBean;
 import com.prometteur.saloonuser.R;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.databinding.ActivityNotificationsBinding;
 import com.prometteur.saloonuser.retrofit.ApiInterface;
 import com.prometteur.saloonuser.retrofit.RetrofitInstance;
@@ -70,6 +73,7 @@ List<NotificationBean.Result> notificationsArrayList=new ArrayList<>();
     @Override
     protected void onResume() {
         super.onResume();
+        checkInternet();
         if (isNetworkAvailable(nActivity)) {
             getNotifications();
         } else {
@@ -101,7 +105,7 @@ List<NotificationBean.Result> notificationsArrayList=new ArrayList<>();
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, getResources().getString(R.string.went_wrong));
+                      //  showFailToast(nActivity, getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -144,5 +148,22 @@ List<NotificationBean.Result> notificationsArrayList=new ArrayList<>();
                 });
 
 
+    }
+
+
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
     }
 }

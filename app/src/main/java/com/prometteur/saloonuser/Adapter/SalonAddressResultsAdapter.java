@@ -44,7 +44,7 @@ public class SalonAddressResultsAdapter extends RecyclerView.Adapter<SalonAddres
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         holder.tvSalonName.setText(result.get(position).getBranName());
         holder.tvSalonLocation.setText(result.get(position).getBranAddr()+", "+result.get(position).getBranCity());
-        Glide.with(nContext).load(result.get(position).getBranImg()).into(holder.ivSalonProfileImg);
+        Glide.with(nContext).load(result.get(position).getBranImg()).placeholder(R.drawable.placeholder_gray_corner).error(R.drawable.placeholder_gray_corner).into(holder.ivSalonProfileImg);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -3,6 +3,7 @@ package com.prometteur.saloonuser.Activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -83,7 +84,6 @@ public class ActivityAppointmentDetails extends AppCompatActivity implements Vie
     Bundle nBundle;
     DialogAppointmentCancellationBinding cancellationBinding;
     Dialog dialogCancelAppointment;
-NetworkChangeReceiver networkChangeReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +92,6 @@ NetworkChangeReceiver networkChangeReceiver;
         setContentView(view);
         nActivity=this;
         nBundle=getIntent().getExtras();
-        networkChangeReceiver = new NetworkChangeReceiver();
         appointmentDetailsBinding.conlaybottom.setVisibility(View.GONE);
         appointmentDetailsBinding.conMainLayout.setVisibility(View.GONE);
         if (nBundle!=null){
@@ -210,9 +209,31 @@ long mLastClickTimePayNow=0;
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(networkChangeReceiver,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        checkInternet();
+
+        appointmentDetailsBinding.pullToRefresh.setNestedScrollingEnabled(false);
+        appointmentDetailsBinding.pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to make your refresh action
+                if (isNetworkAvailable(nActivity)) {
+                    getAppointDetails();
+                } else {
+                    showNoInternetDialog(nActivity);
+                }
+                if(appointmentDetailsBinding.pullToRefresh.isRefreshing()) {
+                    appointmentDetailsBinding.pullToRefresh.setRefreshing(false);
+                }
+            }
+        });
         if (isNetworkAvailable(nActivity)) {
             getAppointDetails();
         } else {
@@ -231,16 +252,16 @@ long mLastClickTimePayNow=0;
         window.setAttributes(wlp);
         dialogCancelAppointment.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT);
-if(penaltyPer.equalsIgnoreCase("50"))
-{
-    cancellationBinding.tvPenaltydesc.setText("Cancellation Time > 1-4 Hr > 50%");
-}else if(penaltyPer.equalsIgnoreCase("25"))
+/*if(penaltyPer.equalsIgnoreCase("50"))
+{*/
+    cancellationBinding.tvPenaltydesc.setText("Cancellation Time > "+psStartTime+"-"+psEndTime+" Hr > "+penaltyPer+"%");
+/*}else if(penaltyPer.equalsIgnoreCase("25"))
 {
     cancellationBinding.tvPenaltydesc.setText("Cancellation Time > 4-8 Hr > 25%");
 }else if(penaltyPer.equalsIgnoreCase("10"))
 {
     cancellationBinding.tvPenaltydesc.setText("Cancellation Time > 8-16 Hr > 10%");
-}
+}*/
 
         cancellationBinding.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -336,7 +357,7 @@ if(penaltyPer.equalsIgnoreCase("50"))
                         if (progressDialog != null && progressDialog.isShowing()) {
                             progressDialog.dismiss();
                         }
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                      //  showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -365,14 +386,12 @@ if(penaltyPer.equalsIgnoreCase("50"))
 
                             if(appointmentData.getSalonRating()!=null) {
                                 appointmentDetailsBinding.rbSalonRating.setRating(Float.parseFloat(appointmentData.getSalonRating()));
-                            }else
-                            {
+                            }else {
                                 appointmentDetailsBinding.rbSalonRating.setRating(0);
                             }
                             if(appointmentData.getAptPaymentStatus().equalsIgnoreCase("0")) {
                                 appointmentDetailsBinding.tvPaymentStatus.setText("Unpaid");
-                            }else
-                            {
+                            }else {
                                 appointmentDetailsBinding.tvPaymentStatus.setText("Paid");
                             }
 
@@ -385,7 +404,7 @@ if(penaltyPer.equalsIgnoreCase("50"))
 
                             if(appointmentData.getBranImg()!=null) {
                                 try {
-                                    Glide.with(nActivity).load(appointmentData.getBranImg()).into(appointmentDetailsBinding.rivSaloonImage);
+                                    Glide.with(nActivity).load(appointmentData.getBranImg()).placeholder(R.drawable.placeholder_gray_corner).error(R.drawable.placeholder_gray_corner).into(appointmentDetailsBinding.rivSaloonImage);
                                 }catch (Exception e)
                                 {
                                     e.printStackTrace();
@@ -422,24 +441,42 @@ if(penaltyPer.equalsIgnoreCase("50"))
                                 offerAppliedCount++;
                             }
                             for (int i = 0; i < appointmentData.getServices().size(); i++) {
-                                subTotal = subTotal + Double.parseDouble(appointmentData.getServices().get(i).getSrvcPrice());
-                            }
+                               /* if(appointmentData.getServices().get(i).getSrvcDiscountPrice()!=null && !appointmentData.getServices().get(i).getSrvcDiscountPrice().isEmpty() && !appointmentData.getAptCouponPrice().equalsIgnoreCase("0.0")){
+                                    subTotal = subTotal + Double.parseDouble(appointmentData.getServices().get(i).getSrvcDiscountPrice());
+                                }*/
+                                    subTotal = subTotal + Double.parseDouble(appointmentData.getServices().get(i).getSrvcPrice());
 
+                            }
+                            discount=Double.parseDouble(appointmentData.getAptDiscount());
 //                            double gstAmt=(subTotal*Double.parseDouble(appointmentData.getAptServiceCharges().replace("%","")))/100;
                             double gstAmt=0;
                             if(!appointmentData.getAptServiceCharges().isEmpty()) {
                                  gstAmt = Double.parseDouble(appointmentData.getAptServiceCharges().replace("%", ""));
                             }
                             if(appointmentData.getAptCouponPrice()!=null && !appointmentData.getAptCouponPrice().isEmpty() && !(appointmentData.getAptCouponPrice().equalsIgnoreCase("0.0") || appointmentData.getAptCouponPrice().equalsIgnoreCase("0.00") || appointmentData.getAptCouponPrice().equalsIgnoreCase("0"))) {
+
+
+                                    appointmentDetailsBinding.tvDiscountPrice.setText("- ₹ " + new DecimalFormat("##.##").format(Double.parseDouble(appointmentData.getAptCouponPrice())) + "/-");
                                 total = gstAmt + subTotal - discount - Double.parseDouble(appointmentData.getAptCouponPrice());
-                                appointmentDetailsBinding.tvDiscountPrice.setText("- ₹ "+new DecimalFormat("##.##").format(Double.parseDouble(appointmentData.getAptCouponPrice()))+"/-");
                                 appointmentDetailsBinding.tvTotalSavings.setText("- ₹ "+new DecimalFormat("##.##").format(discount+Double.parseDouble(appointmentData.getAptCouponPrice()))+"/-");
+                                if(discount+Double.parseDouble(appointmentData.getAptCouponPrice())==0.0){
+                                    appointmentDetailsBinding.relOfferApp.setVisibility(View.GONE);
+                                }
                             }else {
-                                total = gstAmt + subTotal - discount;
-                                appointmentDetailsBinding.linDiscount.setVisibility(View.GONE);
-                                appointmentDetailsBinding.greyviewDiscount.setVisibility(View.GONE);
-                                appointmentDetailsBinding.tvTotalSavings.setText("- ₹ "+new DecimalFormat("##.##").format(discount)+"/-");
+                                total = gstAmt + subTotal - discount-Double.parseDouble(appointmentData.getAptMooiDiscount());
+                                appointmentDetailsBinding.tvTotalSavings.setText("- ₹ "+new DecimalFormat("##.##").format(discount+Double.parseDouble(appointmentData.getAptMooiDiscount()))+"/-");
+                                if(appointmentData.getAptMooiDiscount()!=null && !appointmentData.getAptMooiDiscount().isEmpty()) {
+                                    appointmentDetailsBinding.tvDiscountPrice.setText("- ₹ " + new DecimalFormat("##.##").format(Double.parseDouble(appointmentData.getAptMooiDiscount())) + "/-");
+                                }else
+                                {
+                                    appointmentDetailsBinding.linDiscount.setVisibility(View.GONE);
+                                    appointmentDetailsBinding.greyviewDiscount.setVisibility(View.GONE);
+                                }
+                                if(discount+Double.parseDouble(appointmentData.getAptMooiDiscount())==0.0){
+                                    appointmentDetailsBinding.relOfferApp.setVisibility(View.GONE);
+                                }
                             }
+
                             if(appointmentData.getAptPenality()!=null && !appointmentData.getAptPenality().isEmpty() && !(appointmentData.getAptPenality().equalsIgnoreCase("0")||appointmentData.getAptPenality().equalsIgnoreCase("0.00")||appointmentData.getAptPenality().equalsIgnoreCase("0.0")))
                             {
                                 appointmentDetailsBinding.tvPenaltyPrice.setText("₹ "+new DecimalFormat("##.##").format(Double.parseDouble(appointmentData.getAptPenality()))+"/-");
@@ -467,17 +504,27 @@ if(penaltyPer.equalsIgnoreCase("50"))
                                 appointmentDetailsBinding.linRedeemPoint.setVisibility(View.GONE);
                                 appointmentDetailsBinding.greyviewRedeemPoint.setVisibility(View.GONE);
                             }
-                             strTotal =""+Math.round(total);
+                             strTotal =appointmentData.getAptAmount();//""+Math.round(total);
                             appointmentDetailsBinding.tvSubTotalPrice.setText("₹ "+new DecimalFormat("##.##").format(subTotal)+"/-");
                             appointmentDetailsBinding.tvTotalPrice.setText("₹ "+strTotal+"/-");
                             appointmentDetailsBinding.tvGstPrice.setText("₹ "+new DecimalFormat("##.##").format(gstAmt)+"/-");
-                            appointmentDetailsBinding.tvSavingAmt.setText("- ₹ "+new DecimalFormat("##.##").format(discount)+"/-");
 
+                          /*  if(appointmentData.getAptMooiDiscount()!=null && !appointmentData.getAptMooiDiscount().isEmpty()) {
+                                if(discount>Double.parseDouble(appointmentData.getAptMooiDiscount())) {
+                                    appointmentDetailsBinding.tvSavingAmt.setText("- ₹ " + new DecimalFormat("##.##").format(discount + Double.parseDouble(appointmentData.getAptMooiDiscount())) + "/-");
+                                }else
+                                {
+                                    appointmentDetailsBinding.tvSavingAmt.setText("- ₹ " + new DecimalFormat("##.##").format(discount) + "/-");
+                                }
+                            }else {
+                                appointmentDetailsBinding.tvSavingAmt.setText("- ₹ " + new DecimalFormat("##.##").format(discount) + "/-");
+                            }*/
+                            appointmentDetailsBinding.tvSavingAmt.setText("- ₹ " + new DecimalFormat("##.##").format(discount) + "/-");
                             if(offerAppliedCount!=0) {
                                 appointmentDetailsBinding.tvOfferApplied.setText("" + offerAppliedCount + " Offer Applied");
                             }else
                             {
-                                appointmentDetailsBinding.relOfferApp.setVisibility(View.GONE);
+                               // appointmentDetailsBinding.relOfferApp.setVisibility(View.GONE);
                             }
 
 
@@ -570,7 +617,7 @@ if(penaltyPer.equalsIgnoreCase("50"))
                                 {
                                     appointmentDetailsBinding.btnPayNow.setVisibility(View.GONE);
                                 }
-                            }else if(appointmentData.getAptStatus().equalsIgnoreCase("2") || appointmentData.getAptStatus().equalsIgnoreCase("7")|| appointmentData.getAptStatus().equalsIgnoreCase("8")) {
+                            }else if(appointmentData.getAptStatus().equalsIgnoreCase("2") || appointmentData.getAptStatus().equalsIgnoreCase("7")|| appointmentData.getAptStatus().equalsIgnoreCase("8")|| appointmentData.getAptStatus().equalsIgnoreCase("9")) {
                                 appointmentDetailsBinding.tvAppointmentStatus.setTextColor(getResources().getColor(R.color.red));
                                 if(appointmentData.getAptStatus().equalsIgnoreCase("2")) {
                                     appointmentDetailsBinding.tvAppointmentStatus.setText("Declined");
@@ -578,6 +625,8 @@ if(penaltyPer.equalsIgnoreCase("50"))
                                     appointmentDetailsBinding.tvAppointmentStatus.setText("Cancelled");
                                 }else if(appointmentData.getAptStatus().equalsIgnoreCase("8")) {
                                     appointmentDetailsBinding.tvAppointmentStatus.setText("Unattended");
+                                }else if(appointmentData.getAptStatus().equalsIgnoreCase("9")) {
+                                    appointmentDetailsBinding.tvAppointmentStatus.setText("No Show");
                                 }
                                 appointmentDetailsBinding.btnCall.setVisibility(View.GONE);
                                 appointmentDetailsBinding.btnCancel.setVisibility(View.GONE);
@@ -722,7 +771,7 @@ String transactionId="",orderId="";
 
     public void startPayment(String orderId) {    /**   * Instantiate Checkout   */
         Checkout checkout = new Checkout();  /**   * Set your logo here   */
-        checkout.setImage(R.drawable.ic_launcher_background);  /**   * Reference to current activity   */
+        checkout.setImage(R.mipmap.ic_launcher);  /**   * Reference to current activity   */
         final Activity activity = this;  /**   * Pass your payment options to the Razorpay Checkout as a JSONObject   */
 
         try {
@@ -765,7 +814,7 @@ String transactionId="",orderId="";
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        Toast.makeText(ActivityAppointmentDetails.this, getResources().getString(R.string.went_wrong), Toast.LENGTH_SHORT).show();
+                      //  Toast.makeText(ActivityAppointmentDetails.this, getResources().getString(R.string.went_wrong), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -807,7 +856,7 @@ String transactionId="",orderId="";
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -833,7 +882,7 @@ String transactionId="",orderId="";
 
 
     CheckPenaltyBean checkPenaltyBean;
-    String penaltyAmt="0",penaltyPer="0";
+    String penaltyAmt="0",penaltyPer="0",psStartTime="",psEndTime="";
     private void getCheckPenalty() {
 
         final ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
@@ -857,7 +906,7 @@ String transactionId="",orderId="";
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                      //  showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -869,6 +918,8 @@ String transactionId="",orderId="";
                             if(checkPenaltyBean.getPenaltyPercentage().size()!=0) {
                                 penaltyPer = checkPenaltyBean.getPenaltyPercentage().get(0);
                                 penaltyAmt = checkPenaltyBean.getResult().get(0);
+                                psStartTime = checkPenaltyBean.getPsStartTime();
+                                psEndTime = checkPenaltyBean.getPsEndTime();
                                 if (!penaltyPer.equalsIgnoreCase("0")) {
                                     showCancelRequestDialog(nActivity,penaltyPer);
                                 } else {
@@ -915,7 +966,7 @@ String transactionId="",orderId="";
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -924,7 +975,9 @@ String transactionId="",orderId="";
                         progressDialog.dismiss();
 
                         if (appintPaidStatus.getStatus() == 1) {
-                            showSuccessToast(nActivity,"Payment completed successfully");
+                            if(strPaymentType.equalsIgnoreCase("1")) {
+                                showSuccessToast(nActivity, "Payment completed successfully");
+                            }
                             getAppointDetails();
                         } else if (appintPaidStatus.getStatus() == 3) {
                             showFailToast(nActivity, "" + appintPaidStatus.getMsg());
@@ -938,6 +991,21 @@ String transactionId="",orderId="";
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(networkChangeReceiver);
+    }
+
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
     }
 }

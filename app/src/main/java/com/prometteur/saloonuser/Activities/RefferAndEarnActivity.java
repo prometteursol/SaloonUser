@@ -6,6 +6,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +26,7 @@ import com.prometteur.saloonuser.BuildConfig;
 import com.prometteur.saloonuser.Model.ReviewBean;
 import com.prometteur.saloonuser.Model.ReviewDetailsBean;
 import com.prometteur.saloonuser.R;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.Utils.Preferences;
 import com.prometteur.saloonuser.Utils.TextViewCustomFont;
 import com.prometteur.saloonuser.databinding.ActivityNotificationsBinding;
@@ -133,6 +136,26 @@ public class RefferAndEarnActivity extends AppCompatActivity {
             //e.toString();
         }
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
 
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
+    }
 
 }

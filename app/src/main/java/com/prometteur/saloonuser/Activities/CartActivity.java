@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -42,6 +44,7 @@ import com.prometteur.saloonuser.Model.CartDetailBean;
 import com.prometteur.saloonuser.Model.OrderIdBean;
 import com.prometteur.saloonuser.Model.SalonDetailBean;
 import com.prometteur.saloonuser.R;
+import com.prometteur.saloonuser.Utils.NetworkChangeReceiver;
 import com.prometteur.saloonuser.Utils.Preferences;
 import com.prometteur.saloonuser.Utils.TextViewCustomFont;
 import com.prometteur.saloonuser.databinding.ActivityCartBinding;
@@ -72,6 +75,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.dateTimeOneTime;
+import static com.prometteur.saloonuser.Activities.ActivityHomepage.globalCartCount;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.strAppDate;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.strDate;
 import static com.prometteur.saloonuser.Activities.ActivityHomepage.strTime;
@@ -102,7 +106,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     DialogAccountCreatedBinding requestSendBinding;
     String couponCode = "";
     CartDetailBean cartDetailBean;
-    double subTotal = 0;
+    double subTotal = 0, yourTotalSavings=0;String mooiDiscount="0";
     String strGst = "0",strServiceCharge = "0";
     OrderIdBean orderIdBean;
     String aptServices = "";
@@ -149,6 +153,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         strAppDate= Preferences.getPreferenceValue(nActivity,"appDate");
         strTime=Preferences.getPreferenceValue(nActivity,"appTime");
 
+        couponId=Preferences.getPreferenceValue(nActivity,"couponId");
         couponCode=Preferences.getPreferenceValue(nActivity,"couponCode");
         couponDesc=Preferences.getPreferenceValue(nActivity,"couponDesc");
         couponPrice=Preferences.getPreferenceValue(nActivity,"couponOffPrice");
@@ -156,33 +161,41 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         {
             couponPrice="0";
         }
+        if(couponCode.equalsIgnoreCase("NA"))
+        {
+            couponCode="";
+        }
+        if(couponId.equalsIgnoreCase("NA"))
+        {
+            couponId="";
+        }
         salonServicesBinding.tvDesc.setVisibility(View.GONE);
 
     }
 
     private boolean checkDateTimeIsExpired() {
         String time=Preferences.getPreferenceValue(nActivity, "dateTime");
-        if(time!=null && !time.equalsIgnoreCase("NA")){
-            SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("E, dd MMM yyyy, hh:mm a");
-            try {
-                Date date=simpleDateFormat2.parse(time);
-                if(date.getTime()<new Date().getTime())
-                {
-                    showFailToastLongTime(nActivity,"Selected date & time of appointment is not valid, please select another one & proceed");
-                    ActivityBookAppointment filterBottomSheet = new ActivityBookAppointment(CartActivity.this);
-                    filterBottomSheet.show(nActivity.getSupportFragmentManager(), filterBottomSheet.getTag());
-                    return true;
+        if(globalCartCount>0) {
+            if (time != null && !time.equalsIgnoreCase("NA")) {
+                SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("E, dd MMM yyyy, hh:mm a");
+                try {
+                    Date date = simpleDateFormat2.parse(time);
+                    if (date.getTime() < new Date().getTime()) {
+                        showFailToastLongTime(nActivity, "Selected date & time of appointment is not valid, please select another one & proceed");
+                        ActivityBookAppointment filterBottomSheet = new ActivityBookAppointment(CartActivity.this);
+                        filterBottomSheet.show(nActivity.getSupportFragmentManager(), filterBottomSheet.getTag());
+                        return true;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
 
-        }else
-        {
-            showFailToastLongTime(nActivity,"Selected date & time of appointment is not valid, please select another one & proceed");
-            ActivityBookAppointment filterBottomSheet = new ActivityBookAppointment(CartActivity.this);
-            filterBottomSheet.show(nActivity.getSupportFragmentManager(), filterBottomSheet.getTag());
-            return true;
+            } else {
+                showFailToastLongTime(nActivity, "Selected date & time of appointment is not valid, please select another one & proceed");
+                ActivityBookAppointment filterBottomSheet = new ActivityBookAppointment(CartActivity.this);
+                filterBottomSheet.show(nActivity.getSupportFragmentManager(), filterBottomSheet.getTag());
+                return true;
+            }
         }
         return false;
     }
@@ -215,7 +228,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
                 mLastClickTimeCoupon = SystemClock.elapsedRealtime();
-                startActivityForResult(new Intent(nActivity, CouponCodeListActivity.class).putExtra("aptAmount",new DecimalFormat("##.##").format(subTotal-pointUse)), 122);
+                startActivityForResult(new Intent(nActivity, CouponCodeListActivity.class).putExtra("aptAmount",new DecimalFormat("##.##").format(finalPrice-pointUse-serviceCharge)), 122);
                 break;
             case R.id.tvDateTime:
                 ActivityBookAppointment filterBottomSheet = new ActivityBookAppointment(CartActivity.this);
@@ -281,6 +294,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         final Dialog dialogRequestSend = new Dialog(inActivity, R.style.CustomAlertDialog);
         requestSendBinding = DialogAccountCreatedBinding.inflate(LayoutInflater.from(inActivity));
         dialogRequestSend.setContentView(requestSendBinding.getRoot());
+        dialogRequestSend.setCancelable(false);
         Window window = dialogRequestSend.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.gravity = Gravity.CENTER;
@@ -322,11 +336,11 @@ String couponPrice="0",couponDesc="",couponId="0";
            // redeemPoints[0] = Integer.parseInt(cartDetailBean.getRedeemPoints().getRs());
             salonServicesBinding.tvDiscount.setText("- ₹ " + new DecimalFormat("##.##").format((Double.parseDouble(couponPrice))));
 
-            finalPrice=(totalDiscountPrice+gstAmt+serviceCharge-(Double.parseDouble(couponPrice)+ redeemPoints));
+            finalPrice=(subTotal+gstAmt+serviceCharge-(Double.parseDouble(couponPrice)+ yourTotalSavings+redeemPoints));
             salonServicesBinding.tvPriceOffered.setText("₹ " + Math.round(finalPrice));
-            if(discount+Double.parseDouble(couponPrice)!=0) {
+            if(yourTotalSavings +Double.parseDouble(couponPrice)!=0) {
                 salonServicesBinding.linTotSavings.setVisibility(View.VISIBLE);
-                salonServicesBinding.tvTotalSavings.setText("- ₹ " + new DecimalFormat("##.##").format(discount + Double.parseDouble(couponPrice)));
+                salonServicesBinding.tvTotalSavings.setText("- ₹ " + new DecimalFormat("##.##").format(yourTotalSavings  + Double.parseDouble(couponPrice)));
             }else
             {
                 salonServicesBinding.linTotSavings.setVisibility(View.GONE);
@@ -349,17 +363,18 @@ String couponPrice="0",couponDesc="",couponId="0";
                     salonServicesBinding.ivRightArrow.setVisibility(View.VISIBLE);
                     salonServicesBinding.tvApplyCoupon.setText("Apply Coupon");
                     salonServicesBinding.tvDesc.setVisibility(View.GONE);
+                    couponId=Preferences.getPreferenceValue(nActivity,"couponId");
                     couponCode=Preferences.getPreferenceValue(nActivity,"couponCode");
                     couponDesc=Preferences.getPreferenceValue(nActivity,"couponDesc");
                     couponPrice=Preferences.getPreferenceValue(nActivity,"couponOffPrice");
 
                    // redeemPoints[0] = Double.parseDouble(cartDetailBean.getRedeemPoints().getRs());
                     salonServicesBinding.tvDiscount.setText("- ₹ " + new DecimalFormat("##.##").format((Double.parseDouble(couponPrice))));
-                    finalPrice=(totalDiscountPrice+gstAmt+serviceCharge-(Double.parseDouble(couponPrice)+ redeemPoints));
+                    finalPrice=(subTotal+gstAmt+serviceCharge-(Double.parseDouble(couponPrice)+yourTotalSavings+ redeemPoints));
                     salonServicesBinding.tvPriceOffered.setText("₹ " + Math.round(finalPrice));
-                    if(discount+Double.parseDouble(couponPrice)!=0) {
+                    if(yourTotalSavings +Double.parseDouble(couponPrice)!=0) {
                         salonServicesBinding.linTotSavings.setVisibility(View.VISIBLE);
-                        salonServicesBinding.tvTotalSavings.setText("- ₹ " + new DecimalFormat("##.##").format(discount + Double.parseDouble(couponPrice)));
+                        salonServicesBinding.tvTotalSavings.setText("- ₹ " + new DecimalFormat("##.##").format(yourTotalSavings  + Double.parseDouble(couponPrice)));
                     }else
                     {
                         salonServicesBinding.linTotSavings.setVisibility(View.GONE);
@@ -381,6 +396,7 @@ String couponPrice="0",couponDesc="",couponId="0";
     double totalDiscountPrice = 0, discount = 0;
      double gstAmt=0,userPenalty=0,serviceCharge = 0;
     int pointUse=0;
+    public static int cartCount=0;
     private void getCartDetails() {
 
         final ApiInterface service = RetrofitInstance.getClient().create(ApiInterface.class);
@@ -405,7 +421,18 @@ String couponPrice="0",couponDesc="",couponId="0";
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        if(e.getMessage().contains("502"))
+                        {
+                            if(cartCount<2) {
+                                cartCount++;
+                                getCartDetails();
+                            }else{
+                              //  showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                            }
+                        }else
+                        {
+                           // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                        }
                     }
 
                     @Override
@@ -428,7 +455,7 @@ String couponPrice="0",couponDesc="",couponId="0";
                             }
 
                             if (cartDetailBean.getSalonDetails().get(0).getBranImg() != null) {
-                                Glide.with(nActivity).load(cartDetailBean.getSalonDetails().get(0).getBranImg()).into(salonServicesBinding.ivSalonImage);
+                                Glide.with(nActivity).load(cartDetailBean.getSalonDetails().get(0).getBranImg()).placeholder(R.drawable.placeholder_gray_corner).error(R.drawable.placeholder_gray_corner).into(salonServicesBinding.ivSalonImage);
                             }
                             if (cartDetailBean.getSalonDetails().get(0).getSalonRating() != null) {
                                 salonServicesBinding.rbSalonRating.setRating(Float.parseFloat(cartDetailBean.getSalonDetails().get(0).getSalonRating()));
@@ -451,13 +478,12 @@ String couponPrice="0",couponDesc="",couponId="0";
                                     offerAppliedCount++;
                                     if(mDataList.get(i).getDetails().get(0).getOfferPrice()!=null) {
                                         subTotal = subTotal + Double.parseDouble(mDataList.get(i).getDetails().get(0).getOfferPrice().replace(",",""));
+                                       // discount = discount + (Double.parseDouble(mDataList.get(i).getDetails().get(0).getOfferPrice().replace(",","")) - Double.parseDouble(mDataList.get(i).getDetails().get(0).getDiscountPrice().replace(",","")));
                                     }
                                     if(mDataList.get(i).getDetails().get(0).getDiscountPrice()!=null) {
                                         totalDiscountPrice = totalDiscountPrice + Double.parseDouble(mDataList.get(i).getDetails().get(0).getDiscountPrice().replace(",",""));
                                     }
-                                    if(mDataList.get(i).getDetails().get(0).getOfferPrice()!=null) {
-                                        discount = discount + (Double.parseDouble(mDataList.get(i).getDetails().get(0).getOfferPrice().replace(",","")) - Double.parseDouble(mDataList.get(i).getDetails().get(0).getDiscountPrice().replace(",","")));
-                                    }
+
                                     if(mDataList.get(i).getDetails().get(0).getServices()!=null) {
                                         for (int j = 0; j < mDataList.get(i).getDetails().get(0).getServices().size(); j++) {
                                             JSONObject jsonObject=new JSONObject();
@@ -536,6 +562,10 @@ String couponPrice="0",couponDesc="",couponId="0";
                                             discount=discount+(Double.parseDouble(mDataList.get(i).getDetails().get(0).getOfferPrice())-Double.parseDouble(mDataList.get(i).getDetails().get(0).getDiscountPrice()));
                                         }
 
+                                        if (mDataList.get(i).getDetails().get(0).getOfferName() != null) {
+                                            mDataList.get(i).getDetails().get(0).getServices().get(0).get(0).setOfferName(mDataList.get(i).getDetails().get(0).getOfferName());
+                                        }
+
                                         if(mDataList.get(i).getDetails().get(0).getServices().get(0)!=null) {
                                             for (int j = 0; j < mDataList.get(i).getDetails().get(0).getServices().get(0).size(); j++) {
                                                 try {
@@ -568,7 +598,7 @@ String couponPrice="0",couponDesc="",couponId="0";
                             strGst=cartDetailBean.getSalonDetails().get(0).getBranRateOfGst().replace("%","");
                             strServiceCharge=cartDetailBean.getServiceCharges().replace("%","");
                             //gstAmt=(subTotal*Integer.parseInt(strGst))/100;
-                            serviceCharge=((subTotal-discount)*Double.parseDouble(strServiceCharge))/100;
+                            serviceCharge=((subTotal)*Double.parseDouble(strServiceCharge))/100;
                            // discount = subTotal-totalDiscountPrice;
                             if(cartDetailBean.getUserPenalty()!=null && !cartDetailBean.getUserPenalty().isEmpty() && !(cartDetailBean.getUserPenalty().equalsIgnoreCase("0")||cartDetailBean.getUserPenalty().equalsIgnoreCase("0.0")||cartDetailBean.getUserPenalty().equalsIgnoreCase("0.00")))
                             {
@@ -576,7 +606,7 @@ String couponPrice="0",couponDesc="",couponId="0";
                             }else {
                                 salonServicesBinding.linPenalty.setVisibility(View.GONE);
                             }
-                            final double finalTotalDiscountPrice = totalDiscountPrice;
+                            double finalTotalDiscountPrice = totalDiscountPrice;
                             if(redeemPoints!=0)
                             {
                                 salonServicesBinding.cbRedeemPoints.setChecked(true);
@@ -585,8 +615,10 @@ String couponPrice="0",couponDesc="",couponId="0";
                                 salonServicesBinding.cbRedeemPoints.setChecked(false);
                             }
 
-
-
+try {
+    globalCartCount = mDataList.size();
+}catch (Exception e)
+{}
                             if(comboCount==0 && (mDataList.size() - comboCount)!=0){
                                 salonServicesBinding.tvServiceComboCount.setText((mDataList.size() - comboCount) + " Services added");
                             }else if(comboCount!=0 && (mDataList.size() - comboCount)==0){
@@ -597,25 +629,68 @@ String couponPrice="0",couponDesc="",couponId="0";
                             {
                                 salonServicesBinding.tvServiceComboCount.setVisibility(View.INVISIBLE);
                             }
-
+ mooiDiscount="0";
+                            cartDetailBean.setTotalMooiDiscount(cartDetailBean.getTotalMooiDiscount().replace(",",""));
+                            if(Double.parseDouble(cartDetailBean.getTotalMooiDiscount())!=0){
+                                salonServicesBinding.relAppCoupon.setVisibility(View.GONE);
+                                Preferences.setPreferenceValue(nActivity, "couponId", "0");
+                                Preferences.setPreferenceValue(nActivity, "couponCode", "");
+                                Preferences.setPreferenceValue(nActivity, "couponDesc", "");
+                                Preferences.setPreferenceValue(nActivity, "couponOffPrice", "0");
+                                salonServicesBinding.tvCloseCoupon.setVisibility(View.GONE);
+                                salonServicesBinding.ivRightArrow.setVisibility(View.VISIBLE);
+                                salonServicesBinding.tvApplyCoupon.setText("Apply Coupon");
+                                salonServicesBinding.tvDesc.setVisibility(View.GONE);
+                                couponId=Preferences.getPreferenceValue(nActivity,"couponId");
+                                couponCode = Preferences.getPreferenceValue(nActivity, "couponCode");
+                                couponDesc = Preferences.getPreferenceValue(nActivity, "couponDesc");
+                                couponPrice = Preferences.getPreferenceValue(nActivity, "couponOffPrice");
+                                salonServicesBinding.tvDiscount.setText("- ₹ " + new DecimalFormat("##.##").format((Double.parseDouble(cartDetailBean.getTotalMooiDiscount()))));
+                                mooiDiscount=new DecimalFormat("##.##").format((Double.parseDouble(cartDetailBean.getTotalMooiDiscount())));
+                                /*if(discount>Double.parseDouble(cartDetailBean.getTotalMooiDiscount())) {
+                                    discount = discount - Double.parseDouble(cartDetailBean.getTotalMooiDiscount());
+                                    finalTotalDiscountPrice=finalTotalDiscountPrice+Double.parseDouble(cartDetailBean.getTotalMooiDiscount());
+                                    totalDiscountPrice = totalDiscountPrice +Double.parseDouble(cartDetailBean.getTotalMooiDiscount());
+                                }else {
+                                    totalDiscountPrice = totalDiscountPrice -Double.parseDouble(cartDetailBean.getTotalMooiDiscount());
+                                    //finalTotalDiscountPrice=totalDiscountPrice;
+                                }*/
+                            }else {
+                                salonServicesBinding.relAppCoupon.setVisibility(View.VISIBLE);
+                                salonServicesBinding.tvDiscount.setText("- ₹ " + new DecimalFormat("##.##").format((Double.parseDouble(couponPrice))));
+                            }
 
                             salonServicesBinding.tvSubTotal.setText("₹ " + new DecimalFormat("##.##").format(subTotal));
-                            salonServicesBinding.tvYourSavings.setText("- ₹ " + new DecimalFormat("##.##").format(discount));
-                            if(discount+Double.parseDouble(couponPrice)!=0) {
+                            cartDetailBean.setSalonDiscount( cartDetailBean.getSalonDiscount().replace(",",""));
+                            yourTotalSavings =  Double.parseDouble(cartDetailBean.getSalonDiscount());
+                           /* if(Double.parseDouble(cartDetailBean.getSalonDiscount())!=0) {
+
+                                totalDiscountPrice=Double.parseDouble(cartDetailBean.getSalonDiscount());
+                                finalTotalDiscountPrice=Double.parseDouble(cartDetailBean.getSalonDiscount());
+                            }else{
+                                totalDiscountPrice=Double.parseDouble(cartDetailBean.getSalonDiscount());
+                                finalTotalDiscountPrice=Double.parseDouble(cartDetailBean.getSalonDiscount());
+                            }*/
+
+                            salonServicesBinding.tvYourSavings.setText("- ₹ " + new DecimalFormat("##.##").format(yourTotalSavings));
+                            if(yourTotalSavings+Double.parseDouble(couponPrice)+Double.parseDouble(mooiDiscount)!=0) {
                                 salonServicesBinding.linTotSavings.setVisibility(View.VISIBLE);
-                                salonServicesBinding.tvTotalSavings.setText("- ₹ " + new DecimalFormat("##.##").format(discount + Double.parseDouble(couponPrice)));
+                                salonServicesBinding.tvTotalSavings.setText("- ₹ " + new DecimalFormat("##.##").format(yourTotalSavings + Double.parseDouble(couponPrice)+ Double.parseDouble(mooiDiscount)));
                             }else
                             {
                                 salonServicesBinding.linTotSavings.setVisibility(View.GONE);
                             }
-                            salonServicesBinding.tvDiscount.setText("- ₹ " + new DecimalFormat("##.##").format((Double.parseDouble(couponPrice))));
+
                             salonServicesBinding.tvGST.setText("₹ " + new DecimalFormat("##.##").format(serviceCharge));
 
                             salonServicesBinding.tvSavingAmt.setText("₹ " + new DecimalFormat("##.##").format(discount));
                             salonServicesBinding.tvOfferApplied.setText("" + offerAppliedCount + " Offer Applied");
                             salonServicesBinding.tvPenalty.setText("₹ "+new DecimalFormat("##.##").format(userPenalty));
-
-                            finalPrice=(totalDiscountPrice+gstAmt+serviceCharge-(Double.parseDouble(couponPrice)+ redeemPoints)+userPenalty);
+if(totalDiscountPrice==0.0){
+    totalDiscountPrice=subTotal;
+    finalTotalDiscountPrice=subTotal;
+}
+                            finalPrice=(subTotal+gstAmt+serviceCharge+userPenalty-(Double.parseDouble(couponPrice)+yourTotalSavings+ redeemPoints+Double.parseDouble(cartDetailBean.getTotalMooiDiscount())));
 
 //                            salonServicesBinding.tvPriceOffered.setText("₹ " + new DecimalFormat("##.##").format(finalPrice));
                             salonServicesBinding.tvPriceOffered.setText("₹ " + Math.round(finalPrice));
@@ -636,27 +711,28 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                                 }
                                 int pointPercent= (int) (Double.parseDouble(cartDetailBean.getRedeemPoints().getRs())*Integer.parseInt(pointUsePercent)/100);
 
-                                if(finalPrice<=pointPercent)
+                                if(finalPrice<=Math.round(pointPercent))
                                 {
-                                    pointUse= (int) finalPrice;
+                                    pointUse= (int) Math.round(finalPrice);
                                 }else {
                                     pointUse = pointPercent;
                                 }
                                 salonServicesBinding.tvPoints.setText(pointUse + " Pt.");
                                 salonServicesBinding.tvPointsAmt.setText("- ₹ " + new DecimalFormat("##.##").format(Double.parseDouble(""+pointUse)));
                                 final int finalPointUse = pointUse;
+                                final double finalTotalDiscountPrice1 = finalTotalDiscountPrice;
                                 salonServicesBinding.cbRedeemPoints.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                     @Override
                                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                                         if (b) {
                                             redeemPoints = finalPointUse;
                                             //salonServicesBinding.tvDiscount.setText("- ₹ " + new DecimalFormat("##.##").format((Double.parseDouble(couponPrice)+ redeemPoints[0])));
-                                            finalPrice = (finalTotalDiscountPrice + gstAmt+serviceCharge - (Double.parseDouble(couponPrice) + redeemPoints) + userPenalty);
+                                            finalPrice = (subTotal + gstAmt+serviceCharge - (Double.parseDouble(couponPrice) +yourTotalSavings+ redeemPoints+Double.parseDouble(mooiDiscount)) + userPenalty);
                                             salonServicesBinding.tvPriceOffered.setText("₹ " + Math.round(finalPrice));
                                         } else {
                                             redeemPoints = 0;
                                             // salonServicesBinding.tvDiscount.setText("- ₹ " + new DecimalFormat("##.##").format((Double.parseDouble(couponPrice)+ redeemPoints[0])));
-                                            finalPrice = (finalTotalDiscountPrice + gstAmt+serviceCharge - (Double.parseDouble(couponPrice) + redeemPoints) + userPenalty);
+                                            finalPrice = (subTotal + gstAmt+serviceCharge - (Double.parseDouble(couponPrice) +yourTotalSavings+ redeemPoints+Double.parseDouble(mooiDiscount)) + userPenalty);
                                             salonServicesBinding.tvPriceOffered.setText("₹ " + Math.round(finalPrice));
                                         }
 
@@ -695,17 +771,18 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                                             salonServicesBinding.ivRightArrow.setVisibility(View.VISIBLE);
                                             salonServicesBinding.tvApplyCoupon.setText("Apply Coupon");
                                             salonServicesBinding.tvDesc.setVisibility(View.GONE);
+                                            couponId=Preferences.getPreferenceValue(nActivity,"couponId");
                                             couponCode = Preferences.getPreferenceValue(nActivity, "couponCode");
                                             couponDesc = Preferences.getPreferenceValue(nActivity, "couponDesc");
                                             couponPrice = Preferences.getPreferenceValue(nActivity, "couponOffPrice");
 
                                             // redeemPoints[0] = Double.parseDouble(cartDetailBean.getRedeemPoints().getRs());
                                             salonServicesBinding.tvDiscount.setText("- ₹ " + new DecimalFormat("##.##").format((Double.parseDouble(couponPrice))));
-                                            finalPrice = (totalDiscountPrice + gstAmt + serviceCharge - (Double.parseDouble(couponPrice) + redeemPoints));
+                                            finalPrice = (subTotal + gstAmt + serviceCharge - (Double.parseDouble(couponPrice) +yourTotalSavings+ redeemPoints));
                                             salonServicesBinding.tvPriceOffered.setText("₹ " + Math.round(finalPrice));
-                                            if (discount + Double.parseDouble(couponPrice) != 0) {
+                                            if (yourTotalSavings +discount + Double.parseDouble(couponPrice) != 0) {
                                                 salonServicesBinding.linTotSavings.setVisibility(View.VISIBLE);
-                                                salonServicesBinding.tvTotalSavings.setText("- ₹ " + new DecimalFormat("##.##").format(discount + Double.parseDouble(couponPrice)));
+                                                salonServicesBinding.tvTotalSavings.setText("- ₹ " + new DecimalFormat("##.##").format(yourTotalSavings +discount + Double.parseDouble(couponPrice)));
                                             } else {
                                                 salonServicesBinding.linTotSavings.setVisibility(View.GONE);
                                             }
@@ -726,17 +803,18 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                                     salonServicesBinding.ivRightArrow.setVisibility(View.VISIBLE);
                                     salonServicesBinding.tvApplyCoupon.setText("Apply Coupon");
                                     salonServicesBinding.tvDesc.setVisibility(View.GONE);
+                                    couponId=Preferences.getPreferenceValue(nActivity,"couponId");
                                     couponCode = Preferences.getPreferenceValue(nActivity, "couponCode");
                                     couponDesc = Preferences.getPreferenceValue(nActivity, "couponDesc");
                                     couponPrice = Preferences.getPreferenceValue(nActivity, "couponOffPrice");
 
                                     // redeemPoints[0] = Double.parseDouble(cartDetailBean.getRedeemPoints().getRs());
                                     salonServicesBinding.tvDiscount.setText("- ₹ " + new DecimalFormat("##.##").format((Double.parseDouble(couponPrice))));
-                                    finalPrice = (totalDiscountPrice + gstAmt + serviceCharge - (Double.parseDouble(couponPrice) + redeemPoints));
+                                    finalPrice = (subTotal + gstAmt + serviceCharge - (Double.parseDouble(couponPrice) +yourTotalSavings+ redeemPoints));
                                     salonServicesBinding.tvPriceOffered.setText("₹ " + Math.round(finalPrice));
-                                    if (discount + Double.parseDouble(couponPrice) != 0) {
+                                    if (yourTotalSavings +discount + Double.parseDouble(couponPrice) != 0) {
                                         salonServicesBinding.linTotSavings.setVisibility(View.VISIBLE);
-                                        salonServicesBinding.tvTotalSavings.setText("- ₹ " + new DecimalFormat("##.##").format(discount + Double.parseDouble(couponPrice)));
+                                        salonServicesBinding.tvTotalSavings.setText("- ₹ " + new DecimalFormat("##.##").format(yourTotalSavings +discount + Double.parseDouble(couponPrice)));
                                     } else {
                                         salonServicesBinding.linTotSavings.setVisibility(View.GONE);
                                     }
@@ -822,7 +900,17 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
         {
             strUserPenaulty=""+userPenalty;
         }
-        service.getBookAppoint(branchId, USERIDVAL, strAppDate, timeIn24Hr, new DecimalFormat("##.##").format(gstAmt), new DecimalFormat("##.##").format(subTotal),"" +Math.round(finalPrice), strPaymentType, couponId, aptServices,strUserPenaulty,strRedeemPoints,""+new DecimalFormat("##.##").format(serviceCharge),couponPrice)
+       String aptPaymentStatus="0";
+        if(Math.round(finalPrice)==0)
+        {
+            strPaymentType = "2";
+            aptPaymentStatus="1";
+        }
+        if(couponId.equalsIgnoreCase("0"))
+        {
+            couponId="";
+        }
+        service.getBookAppoint(branchId, USERIDVAL, strAppDate, timeIn24Hr, new DecimalFormat("##.##").format(gstAmt), new DecimalFormat("##.##").format(subTotal),"" +Math.round(finalPrice), strPaymentType, couponId, aptServices,strUserPenaulty,strRedeemPoints,""+new DecimalFormat("##.##").format(serviceCharge),couponPrice, mooiDiscount,""+yourTotalSavings,aptPaymentStatus)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<BookAppointBean>() {
@@ -841,7 +929,7 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                      //  showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -864,6 +952,9 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                         } else if (bookAppointBean.getStatus() == 3) {
                             showFailToast(nActivity, "" + bookAppointBean.getMsg());
                               logout(nActivity);
+                        }else
+                        {
+                            showFailToast(nActivity, "" + bookAppointBean.getMsg());
                         }
                         //setEmptyMsg(mDataList, comboPageBinding.recycleCombolist, ivNoData);
                     }
@@ -894,7 +985,7 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                     @Override
                     public void onError(Throwable e) {
                         progressDialog.dismiss();
-                        showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
+                       // showFailToast(nActivity, nActivity.getResources().getString(R.string.went_wrong));
                     }
 
                     @Override
@@ -909,7 +1000,16 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                             Preferences.setPreferenceValue(nActivity,"offDay",workingDetails.getResult().get(0).getBranOffDay());
                             Preferences.setPreferenceValue(nActivity,"offlineEndTime",workingDetails.getResult().get(0).getBranOpenedOn());
                             if(getCheckDateAndTime()) {
-                                showPaymentTypeDialog(nActivity);
+                                if(Math.round(finalPrice)==0)
+                                {
+                                    if (isNetworkAvailable(nActivity)) {
+                                        getBookAppoint();
+                                    } else {
+                                        showNoInternetDialog(nActivity);
+                                    }
+                                }else {
+                                    showPaymentTypeDialog(nActivity);
+                                }
                             }
                         } else if (workingDetails.getStatus() == 3) {
                             showFailToast(nActivity, "" + workingDetails.getMsg());
@@ -1184,7 +1284,12 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
             final String strOffDay=Preferences.getPreferenceValue(nActivity,"offDay");
             final String strOfflineEndTime=Preferences.getPreferenceValue(nActivity,"offlineEndTime");
             if (!strTimeSlots[0].isEmpty()) {
-                timeSlots = getTimeSlots(strTimeSlots[0]);
+                try {
+                    timeSlots = getTimeSlots(strTimeSlots[0]);
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
             recycleTimeSlot.setAdapter(new BookingTimeSlotAdapter(nActivity, timeSlots, ActivityBookAppointment.this));
             btnBookNow.setOnClickListener(this);
@@ -1235,6 +1340,20 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                                 strTimeSlots[0]=Preferences.getPreferenceValue(nActivity, "workingHour");
                                 strTime="";
                                 if (!strTimeSlots[0].isEmpty()) {
+
+                                    //for today
+                                    final SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
+                                    final Date dateStartWithDate= new Date();
+                                    Date startTimeDate = null;
+                                    try {
+                                        startTimeDate = sdf1.parse(strTimeSlots[0].split("-")[0]);
+                                        dateStartWithDate.setHours(startTimeDate.getHours());
+                                        dateStartWithDate.setMinutes(startTimeDate.getMinutes());
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    //for today end
+
                                     Date curDate = new Date();
                                     Date nextDate = new Date();
                                     date1.setHours(0);//1591883765659 1591813800000
@@ -1247,24 +1366,36 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                                     nextDate.setMinutes(0);
                                     nextDate.setSeconds(0);
 
-                                    SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
+
                                     String changeFTime;
 
                                     if (date1.getDate() == curDate.getDate() && date1.getMonth() == curDate.getMonth() && date1.getYear() == curDate.getYear()) {
+                                        final long currentDateTime=new Date().getTime();
+                                        if(currentDateTime<dateStartWithDate.getTime())
+                                        {
+                                            Date date2 = null;
+                                            try {
+                                                date2 = sdf1.parse(strTimeSlots[0].split("-")[0]);
+                                            } catch (ParseException e) {
+                                                e.printStackTrace();
+                                            }
+                                            Date date3 = new Date();
+                                            date3.setTime(date2.getTime());  //add 1 hour in next day
+                                            changeFTime = sdf1.format(date3.getTime()+ 3600000);
 
-                                        if (todayDateTime > todayDateTimeEndTime) {
-                                            changeFTime = sdf1.format(new Date().getTime());
-                                        } else {
-                                            Date date2 = new Date();
+                                            strTimeSlots[0] = changeFTime + "-" + strTimeSlots[0].split("-")[1];
+                                        }else
+                                        if(currentDateTime>todayDateTimeEndTime) {
+                                            changeFTime = sdf1.format(currentDateTime);
+                                        }else
+                                        {
+                                            Date date2=new Date();
                                             date2.setTime(todayDateTimeEndTime);
                                             changeFTime = sdf1.format(date2.getTime());
                                         }
                                         strTimeSlots[0] = changeFTime + "-" + strTimeSlots[0].split("-")[1];
-
-
-                                        timeSlots = getTimeSlots(strTimeSlots[0]);
-                                        Date dateEndWithDate = new Date();
-                                        Date dateEnd = null;
+                                        final Date dateEndWithDate= new Date();
+                                        Date dateEnd= null;
                                         try {
                                             dateEnd = sdf1.parse(strTimeSlots[0].split("-")[1]);
                                             dateEndWithDate.setHours(dateEnd.getHours());
@@ -1273,7 +1404,18 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                                             e.printStackTrace();
                                         }
 
-                                        if (new Date().getTime() < dateEndWithDate.getTime()) {
+                                       /* final Date dateStartWithDate= new Date();
+                                        Date startTimeDate = null;
+                                        try {
+                                            startTimeDate = sdf1.parse(strTimeSlots[0].split("-")[0]);
+                                            dateStartWithDate.setHours(startTimeDate.getHours());
+                                            dateStartWithDate.setMinutes(startTimeDate.getMinutes());
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }*/
+
+                                        if(currentDateTime<(dateEndWithDate.getTime()-900000)){
+                                            Log.i("todays","in between start and end");
                                             tvSelectDateTitle.setVisibility(View.GONE);
                                             calendarView.setVisibility(View.GONE);
                                             tvSelectTimeSlotTitle.setVisibility(View.VISIBLE);
@@ -1281,27 +1423,15 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                                             btnBookNow.setVisibility(View.VISIBLE);
                                             timeSlots = getTimeSlots(strTimeSlots[0]);
                                             recycleTimeSlot.setAdapter(new BookingTimeSlotAdapter(nActivity, timeSlots, ActivityBookAppointment.this));
-                                        } else {
+                                        }else
+                                        {
+                                            Log.i("todays","closed");
                                             showFailToast(nActivity, getString(R.string.salon_off_time));
                                         }
-                                    } /*else if (date1.getDate() == nextDate.getDate() && date1.getMonth() == nextDate.getMonth() && date1.getYear() == nextDate.getYear()) //next day
-                                    {
-                                        tvSelectDateTitle.setVisibility(View.GONE);
-                                        calendarView.setVisibility(View.GONE);
-                                        tvSelectTimeSlotTitle.setVisibility(View.VISIBLE);
-                                        recycleTimeSlot.setVisibility(View.VISIBLE);
-                                        btnBookNow.setVisibility(View.VISIBLE);
 
-                                        Date date2=sdf1.parse(strTimeSlots[0].split("-")[0]);
-                                        Date date3=new Date();
-                                        date3.setTime(date2.getTime()+3600000);  //add 1 hour in next day
-                                        changeFTime = sdf1.format(date3.getTime());
 
-                                        strTimeSlots[0] = changeFTime + "-" + strTimeSlots[0].split("-")[1];
 
-                                        timeSlots = getTimeSlots(strTimeSlots[0]);
-                                        recycleTimeSlot.setAdapter(new BookingTimeSlotAdapter(nActivity, timeSlots, ActivityBookAppointment.this));
-                                    }*/else  {
+                                    } else  {
                                         String strWeekDay="";
                                         switch (strOffDay)
                                         {
@@ -1358,7 +1488,7 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
                                             tvSelectTimeSlotTitle.setVisibility(View.VISIBLE);
                                             recycleTimeSlot.setVisibility(View.VISIBLE);
                                             btnBookNow.setVisibility(View.VISIBLE);
-                                            if(!(new Date().getTime()<dateEndWithDate.getTime())) {//when todays time is closed
+                                            if(!(new Date().getTime()<dateEndWithDate.getTime()-900000)) {//when todays time is closed
 
 
                                                 Date date2 = null;
@@ -1492,5 +1622,25 @@ if((subTotal+gstAmt+serviceCharge)<=finalPrice)
         }
 return false;
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
 
+    NetworkChangeReceiver receiver;
+    public void checkInternet() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkChangeReceiver(this);
+        registerReceiver(receiver, filter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
+    }
 }

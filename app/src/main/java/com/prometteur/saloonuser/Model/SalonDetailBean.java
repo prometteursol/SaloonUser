@@ -86,6 +86,12 @@ this.result = result;
         @SerializedName("bran_city")
         @Expose
         private String branCity;
+        @SerializedName("bran_lat")
+        @Expose
+        private String branLat;
+        @SerializedName("bran_lon")
+        @Expose
+        private String branLon;
         @SerializedName("bran_state")
         @Expose
         private String branState;
@@ -107,6 +113,12 @@ this.result = result;
         @SerializedName("discount")
         @Expose
         private String discount;
+        @SerializedName("combo_discount")
+        @Expose
+        private String comboDiscount;
+        @SerializedName("offer_discount")
+        @Expose
+        private String offerDiscount;
         @SerializedName("closed")
         @Expose
         private String closed;
@@ -161,6 +173,22 @@ this.result = result;
 
         public void setBranAddr(String branAddr) {
             this.branAddr = branAddr;
+        }
+
+        public String getBranLat() {
+            return branLat;
+        }
+
+        public void setBranLat(String branLat) {
+            this.branLat = branLat;
+        }
+
+        public String getBranLon() {
+            return branLon;
+        }
+
+        public void setBranLon(String branLon) {
+            this.branLon = branLon;
         }
 
         public String getBranEstblishYear() {
@@ -281,6 +309,22 @@ this.result = result;
 
         public void setDiscount(String discount) {
             this.discount = discount;
+        }
+
+        public String getComboDiscount() {
+            return comboDiscount;
+        }
+
+        public void setComboDiscount(String comboDiscount) {
+            this.comboDiscount = comboDiscount;
+        }
+
+        public String getOfferDiscount() {
+            return offerDiscount;
+        }
+
+        public void setOfferDiscount(String offerDiscount) {
+            this.offerDiscount = offerDiscount;
         }
 
         public Object getBranchRating() {
